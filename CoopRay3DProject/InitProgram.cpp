@@ -11,24 +11,20 @@ Camera3DController::Camera3DController() {
     camera.up = cameraUp;
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
+    collision = { 0 };
+    ray = { 0 };
 }
 
 void Camera3DController::Update() {
-    UpdateCamera(&camera, CAMERA_FREE);
+    if (IsCursorHidden()) UpdateCamera(&camera, CAMERA_FREE);
 }
 
 void Camera3DController::HandleInput() {
-    if (IsKeyDown(KEY_W)) camera.position = Vector3Add(camera.position, Vector3Scale(Vector3Normalize(Vector3Subtract(camera.target, camera.position)), cameraSpeed));
-    if (IsKeyDown(KEY_S)) camera.position = Vector3Subtract(camera.position, Vector3Scale(Vector3Normalize(Vector3Subtract(camera.target, camera.position)), cameraSpeed));
-    if (IsKeyDown(KEY_A)) camera.position = Vector3Subtract(camera.position, Vector3Scale(Vector3Normalize(Vector3CrossProduct(Vector3Subtract(camera.target, camera.position), camera.up)), cameraSpeed));
-    if (IsKeyDown(KEY_D)) camera.position = Vector3Add(camera.position, Vector3Scale(Vector3Normalize(Vector3CrossProduct(Vector3Subtract(camera.target, camera.position), camera.up)), cameraSpeed));
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-        Vector2 mouseDelta = GetMouseDelta();
-        camera.target = Vector3Add(camera.position, Vector3RotateByAxisAngle(Vector3Subtract(camera.target, camera.position), camera.up, -mouseDelta.x * cameraRotationSpeed));
-
-        Vector3 right = Vector3Normalize(Vector3CrossProduct(Vector3Subtract(camera.target, camera.position), camera.up));
-        camera.target = Vector3Add(camera.position, Vector3RotateByAxisAngle(Vector3Subtract(camera.target, camera.position), right, -mouseDelta.y * cameraRotationSpeed));
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+    {
+        if (IsCursorHidden()) EnableCursor();
+        else DisableCursor();
     }
 
     if (IsKeyPressed(KEY_R)) {
@@ -36,6 +32,29 @@ void Camera3DController::HandleInput() {
         camera.target = cameraTarget;
         camera.up = cameraUp;
     }
+
+
+    //Адекватно сделать отрисовку фигур, потом это
+    // 
+    //if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    //{
+    //    if (!collision.hit)
+    //    {
+    //        ray = GetScreenToWorldRay(GetMousePosition(), camera);
+
+    //        // Check collision between ray and box
+    //        collision = GetRayCollisionBox(ray,
+    //            (BoundingBox) {
+    //            (Vector3) {
+    //            cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2
+    //        },
+    //                (Vector3) {
+    //                cubePosition.x + cubeSize.x / 2, cubePosition.y + cubeSize.y / 2, cubePosition.z + cubeSize.z / 2
+    //            }
+    //        });
+    //    }
+    //    else collision.hit = false;
+    //}
 }
 
 void InitProgram() {

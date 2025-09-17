@@ -16,14 +16,8 @@ void Drawer::DrawScene(const Camera3DController& cameraController) {
     DrawSphere({ 3.0f, 0.0f, 0.0f }, 1.0f, GREEN);
     DrawSphereWires({ 3.0f, 0.0f, 0.0f }, 1.0f, 16, 16, DARKGREEN);
 
-    DrawCylinder({ -3.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 2.0f, 16, BLUE);
-    DrawCylinderWires({ -3.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 2.0f, 16, DARKBLUE);
-
     DrawCube({ 0.0f, 3.0f, 0.0f }, 1.0f, 1.0f, 1.0f, PURPLE);
     DrawSphere({ 3.0f, 3.0f, 0.0f }, 0.8f, ORANGE);
-    DrawCylinder({ -3.0f, 3.0f, 0.0f }, 0.5f, 0.5f, 1.5f, 12, YELLOW);
-
-    DrawCylinder({ 0.0f, 0.0f, 3.0f }, 1.0f, 0.0f, 2.0f, 4, SKYBLUE);
 
     EndMode3D();
 }

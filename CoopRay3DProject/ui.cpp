@@ -1,27 +1,46 @@
 #include "ui.h"
-#include <raylib.h>
+
 
 void UI::DrawUI() {
 
     DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
-    DrawText("Right mouse button: Rotate camera", 10, 80, 16, DARKGRAY);
+    DrawText("Right mouse button: Free camera mode", 10, 80, 16, DARKGRAY);
     DrawText("R: Reset camera", 10, 100, 16, DARKGRAY);
     DrawText("ESC: Exit", 10, 120, 16, DARKGRAY);
 
     DrawRectangle(0, 0, GetScreenWidth(), 50, Color{ 230, 230, 230, 255 });
     DrawRectangle(0, 50, GetScreenWidth(), 1, GRAY);
 
-    DrawRectangle(20, 10, 120, 30, Color{ 200, 200, 200, 255 });
+    
+
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 255);
+
+    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape"))
+    {
+
+    };
+
+    if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape"))
+    {
+
+    };
+
+    if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape"))
+    {
+
+    };
+
+    /*DrawRectangle(20, 10, 120, 30, Color{ 200, 200, 200, 255 });
     DrawRectangleLines(20, 10, 120, 30, GRAY);
-    DrawText("Add Shape", 35, 17, 16, BLACK);
+    DrawText("Add Shape", 35, 17, 16, BLACK);*/
 
-    DrawRectangle(150, 10, 120, 30, Color{ 200, 200, 200, 255 });
+    /*DrawRectangle(150, 10, 120, 30, Color{ 200, 200, 200, 255 });
     DrawRectangleLines(150, 10, 120, 30, GRAY);
-    DrawText("Delete Shape", 160, 17, 16, BLACK);
+    DrawText("Delete Shape", 160, 17, 16, BLACK);*/
 
-    DrawRectangle(280, 10, 120, 30, Color{ 200, 200, 200, 255 });
+    /*DrawRectangle(280, 10, 120, 30, Color{ 200, 200, 200, 255 });
     DrawRectangleLines(280, 10, 120, 30, GRAY);
-    DrawText("Edit Shape", 295, 17, 16, BLACK);
+    DrawText("Edit Shape", 295, 17, 16, BLACK);*/
 
     DrawRectangle(GetScreenWidth() - 300, 50, 300, GetScreenHeight() - 50, Color{ 240, 240, 240, 255 });
     DrawRectangle(GetScreenWidth() - 300, 50, 1, GetScreenHeight() - 50, GRAY);

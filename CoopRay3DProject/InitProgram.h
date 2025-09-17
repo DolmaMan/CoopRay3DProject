@@ -12,6 +12,8 @@ struct Camera3DController {
     Vector3 cameraUp;
     float cameraSpeed;
     float cameraRotationSpeed;
+    RayCollision collision;
+    Ray ray;
 
     Camera3DController();
     void Update();
