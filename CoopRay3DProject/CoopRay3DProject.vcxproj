@@ -102,7 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\toor\source\repos\CoopRay3DProject\vcpkg\packages\raylib_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\proj\CoopRay3DProject\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,11 +125,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="InitProgram.cpp" />
+    <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitProgram.h" />
     <ClInclude Include="raygui.h" />
+    <ClInclude Include="Drawer.h" />
+    <ClInclude Include="ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
