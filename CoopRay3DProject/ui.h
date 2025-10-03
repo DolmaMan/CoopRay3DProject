@@ -1,7 +1,13 @@
 #pragma once
 #include <raylib.h>
 #include "raygui.h"
+#include"config.h"
+#include"InitProgram.h"
+#include"Drawer.h"
+
 namespace UI {
-    void DrawUI();
+    void DrawMainMenu();
+    void DrawExitMenu();
+    void GetScene();
 }
 

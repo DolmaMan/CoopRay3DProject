@@ -1,8 +1,9 @@
 #pragma once
 #include<raylib.h>
 #include <raymath.h>
-#define RAYGUI_IMPLEMENTATION
 
+#define RAYGUI_IMPLEMENTATION
+#include"config.h"
 
 
 struct Camera3DController {

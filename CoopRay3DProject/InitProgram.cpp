@@ -1,5 +1,5 @@
 #include "InitProgram.h"
-#include"config.h"
+
 
 Camera3DController::Camera3DController() {
     cameraPosition = { 10.0f, 10.0f, 10.0f };

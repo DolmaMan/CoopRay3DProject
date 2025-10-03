@@ -12,6 +12,14 @@
 Rectangle screenTextureRect;
 std::map<std::string, Sound> ListSounds;
 
+bool exitWindowRequested = false;   // Flag to request window to exit
+bool exitWindow = false;
+
+Camera3DController cameraController;
+RenderTexture screenTexture;
+
+MenusEnum currentEnum;
+
 void LoadSounds() {
     std::string folder_path = "..\\assets\\audio"; // Путь к папке (в данном случае, текущая папка)
 
@@ -36,63 +44,25 @@ int main()
     InitProgram();
     SetExitKey(KEY_NULL);
 
-    Camera3DController cameraController;
-    RenderTexture screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight());
+    screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight());
     screenTextureRect = { 0.0f, 50.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
-
-    bool exitWindowRequested = false;   // Flag to request window to exit
-    bool exitWindow = false;
+    currentEnum = MainMenu;
+    
 
     InitAudioDevice();
     LoadSounds();
 
+    
 
     while (!exitWindow) {
-        if (exitWindowRequested)
-        {
-            BeginDrawing();
-            ClearBackground(RAYWHITE);
-            
-            
-            
-            // СДЕЛАТЬ МЕНЮ ВЫХОДА
-            DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
-            DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
-
-            EndDrawing();
-
-            if (IsKeyPressed(KEY_Y) || WindowShouldClose()) break;
-            else if (IsKeyReleased(KEY_ESCAPE) || IsKeyPressed(KEY_N)) exitWindowRequested = false;
-
-            continue;
+        switch (currentEnum) {
+        case MainMenu: {
+            UI::DrawMainMenu();
+        }break;
+        case ExitMenu: {
+            UI::DrawExitMenu();
+        }break;
         }
-        else 
-        {
-
-
-            if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
-                PlaySound(ListSounds["General_Quitgame.wav"]);
-                exitWindowRequested = true;
-                continue;
-            }
-        }
-
-        cameraController.HandleInput();
-        cameraController.Update();
-
-        BeginTextureMode(screenTexture);
-        ClearBackground(RAYWHITE);
-        Drawer::DrawScene(cameraController);
-        EndTextureMode();
-
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,0.0 }, RAYWHITE);
-
-        UI::DrawUI();
-
-        EndDrawing();
     }
 
     CleanupProgram();

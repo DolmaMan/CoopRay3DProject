@@ -1,7 +1,14 @@
 #include "ui.h"
 
 
-void UI::DrawUI() {
+void UI::DrawMainMenu() {
+    GetScene();
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,0.0 }, RAYWHITE); //—ÂÚÍ‡
+
 
     DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
     DrawText("Right mouse button: Free camera mode", 10, 80, 16, DARKGRAY);
@@ -61,4 +68,38 @@ void UI::DrawUI() {
     DrawText("", 10, GetScreenHeight() - 22, 16, DARKGRAY);
 
     DrawFPS(GetScreenWidth() - 80, GetScreenHeight() - 25);
+
+    EndDrawing();
+
+    if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
+        PlaySound(ListSounds["General_Quitgame.wav"]);
+        currentEnum = MenusEnum::ExitMenu;
+    }
+}
+
+void UI::DrawExitMenu() {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+
+    // —ƒ≈À¿“‹ Ã≈Õﬁ ¬€’Œƒ¿
+    DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
+    DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+
+    EndDrawing();
+
+    if (IsKeyPressed(KEY_Y) || WindowShouldClose()) exitWindow = true;
+    else if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_N)) currentEnum = MenusEnum::MainMenu;
+
+}
+
+void UI::GetScene()
+{
+    cameraController.HandleInput();
+    cameraController.Update();
+
+    BeginTextureMode(screenTexture);
+    ClearBackground(RAYWHITE);
+    Drawer::DrawScene(cameraController);
+    EndTextureMode();
 }
