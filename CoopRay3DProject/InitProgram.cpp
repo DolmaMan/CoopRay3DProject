@@ -1,4 +1,5 @@
 #include "InitProgram.h"
+#include"config.h"
 
 Camera3DController::Camera3DController() {
     cameraPosition = { 10.0f, 10.0f, 10.0f };
@@ -21,7 +22,7 @@ void Camera3DController::Update() {
 
 void Camera3DController::HandleInput() {
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && CheckCollisionPointRec(GetMousePosition(), { screenTextureRect.x, screenTextureRect.y, screenTextureRect.width, -screenTextureRect.height}  ))
     {
         if (IsCursorHidden()) EnableCursor();
         else DisableCursor();
@@ -65,5 +66,6 @@ void InitProgram() {
 }
 
 void CleanupProgram() {
+    CloseAudioDevice();
     CloseWindow();
 }
