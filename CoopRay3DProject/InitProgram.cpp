@@ -34,6 +34,11 @@ void Camera3DController::HandleInput() {
         camera.up = cameraUp;
     }
 
+    if (IsKeyPressed(KEY_TAB)) {
+        if (IsCursorHidden()) EnableCursor();
+        else DisableCursor();
+    }
+
 
     //Адекватно сделать отрисовку фигур, потом это
     // 

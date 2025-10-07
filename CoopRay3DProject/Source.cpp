@@ -10,13 +10,17 @@
 
 
 Rectangle screenTextureRect;
+Rectangle addMenuTextureRect;
+
 std::map<std::string, Sound> ListSounds;
 
 bool exitWindowRequested = false;   // Flag to request window to exit
 bool exitWindow = false;
 
 Camera3DController cameraController;
+
 RenderTexture screenTexture;
+RenderTexture addMenuTexture;
 
 MenusEnum currentEnum;
 
@@ -44,15 +48,18 @@ int main()
     InitProgram();
     SetExitKey(KEY_NULL);
 
-    screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight());
-    screenTextureRect = { 0.0f, 50.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
+    screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight()-80);
+    screenTextureRect = { 0.0f, 0.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
+    
+    addMenuTexture = LoadRenderTexture(600, 400);
+    addMenuTextureRect = { 0.0, 0.0, (float)addMenuTexture.texture.width, (float)-addMenuTexture.texture.height };
+    
     currentEnum = MainMenu;
     
-
     InitAudioDevice();
     LoadSounds();
 
-    
+
 
     while (!exitWindow) {
         switch (currentEnum) {

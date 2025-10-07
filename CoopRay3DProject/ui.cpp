@@ -1,17 +1,20 @@
 #include "ui.h"
-
+bool addMenuRequested = false,
+     editMenuRequested = false,
+     deleteMenuRequested = false;
 
 void UI::DrawMainMenu() {
     GetScene();
+    LoadMenuTextures();
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,0.0 }, RAYWHITE); //—ÂÚÍ‡
+    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE); //—ÂÚÍ‡
 
 
     DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
-    DrawText("Right mouse button: Free camera mode", 10, 80, 16, DARKGRAY);
+    DrawText("Right mouse button or TAB: Free camera mode", 10, 80, 16, DARKGRAY);
     DrawText("R: Reset camera", 10, 100, 16, DARKGRAY);
     DrawText("ESC: Exit", 10, 120, 16, DARKGRAY);
 
@@ -24,18 +27,31 @@ void UI::DrawMainMenu() {
 
     if (GuiButton({ 20, 10, 120, 30 }, "Add Shape"))
     {
-
+        addMenuRequested = true;
     };
 
     if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape"))
     {
-
+        deleteMenuRequested = true;
     };
 
     if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape"))
     {
-
+        editMenuRequested = true;
     };
+
+    if (addMenuRequested)
+    {
+        DrawAddMenu();
+    }
+    else if (editMenuRequested) 
+    {
+        DrawEditMenu();
+    }
+    else if(deleteMenuRequested)
+    {
+        DrawDeleteMenu();
+    }
 
     /*DrawRectangle(20, 10, 120, 30, Color{ 200, 200, 200, 255 });
     DrawRectangleLines(20, 10, 120, 30, GRAY);
@@ -83,14 +99,51 @@ void UI::DrawExitMenu() {
 
 
     // —ƒ≈À¿“‹ Ã≈Õﬁ ¬€’Œƒ¿
-    DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
-    DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+    Color BgCol = { 0, 0, 0, 200 };
+    DrawRectangle(0, 200, GetScreenWidth(), 200, BgCol);
+    DrawText("Are you sure you want to exit program? [Y/N]", 40, 270, 30, WHITE);
 
     EndDrawing();
 
     if (IsKeyPressed(KEY_Y) || WindowShouldClose()) exitWindow = true;
     else if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_N)) currentEnum = MenusEnum::MainMenu;
 
+}
+
+void UI::DrawAddMenu() 
+{
+    DrawTextureRec(addMenuTexture.texture, addMenuTextureRect, { 320.0,160.0 }, RAYWHITE);
+}
+
+void UI::DrawEditMenu() 
+{
+
+}
+
+void UI::DrawDeleteMenu() 
+{
+
+}
+
+void UI::LoadMenuTextures()
+{
+    BeginTextureMode(addMenuTexture);
+    ClearBackground(WHITE);
+    DrawRectangleLines(1, 0, addMenuTexture.texture.width-1, addMenuTexture.texture.height-1, BLACK);
+
+    Rectangle rect = { 0,0,100,10 };  
+    static char* str = new char[100] {'\0'};
+    if (GuiTextBox(rect, str, 100, true)) {
+
+    };
+    Rectangle rect2 = { 100,100,100,20 };
+    static const char* str2 = "Cube;Sphere;Helix";
+    static int selectedIndex = 0;
+    static bool editMode = false;
+    if (GuiDropdownBox(rect2, str2, &selectedIndex, editMode)) {
+        editMode = !editMode;
+    }
+    EndTextureMode();
 }
 
 void UI::GetScene()
