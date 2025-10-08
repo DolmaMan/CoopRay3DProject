@@ -5,7 +5,6 @@ bool addMenuRequested = false,
 
 void UI::DrawMainMenu() {
     GetScene();
-    LoadMenuTextures();
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -112,7 +111,22 @@ void UI::DrawExitMenu() {
 
 void UI::DrawAddMenu() 
 {
-    DrawTextureRec(addMenuTexture.texture, addMenuTextureRect, { 320.0,160.0 }, RAYWHITE);
+    Rectangle menuRect = { 320.0, 160.0, 600, 400 };
+    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
+    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
+
+    Rectangle rect = { menuRect.x, menuRect.y, 100, 10 };
+    static char* str = new char[100] {'\0'};
+    if (GuiTextBox(rect, str, 100, true)) {
+
+    };
+    Rectangle rect2 = { menuRect.x, menuRect.y + 100, 100, 20 };
+    static const char* str2 = "Cube;Sphere;Helix";
+    static int selectedIndex = 0;
+    static bool editMode = false;
+    if (GuiDropdownBox(rect2, str2, &selectedIndex, editMode)) {
+        editMode = !editMode;
+    }
 }
 
 void UI::DrawEditMenu() 
@@ -123,27 +137,6 @@ void UI::DrawEditMenu()
 void UI::DrawDeleteMenu() 
 {
 
-}
-
-void UI::LoadMenuTextures()
-{
-    BeginTextureMode(addMenuTexture);
-    ClearBackground(WHITE);
-    DrawRectangleLines(1, 0, addMenuTexture.texture.width-1, addMenuTexture.texture.height-1, BLACK);
-
-    Rectangle rect = { 0,0,100,10 };  
-    static char* str = new char[100] {'\0'};
-    if (GuiTextBox(rect, str, 100, true)) {
-
-    };
-    Rectangle rect2 = { 100,100,100,20 };
-    static const char* str2 = "Cube;Sphere;Helix";
-    static int selectedIndex = 0;
-    static bool editMode = false;
-    if (GuiDropdownBox(rect2, str2, &selectedIndex, editMode)) {
-        editMode = !editMode;
-    }
-    EndTextureMode();
 }
 
 void UI::GetScene()

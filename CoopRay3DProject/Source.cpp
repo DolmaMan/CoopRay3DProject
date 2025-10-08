@@ -51,9 +51,6 @@ int main()
     screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight()-80);
     screenTextureRect = { 0.0f, 0.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
     
-    addMenuTexture = LoadRenderTexture(600, 400);
-    addMenuTextureRect = { 0.0, 0.0, (float)addMenuTexture.texture.width, (float)-addMenuTexture.texture.height };
-    
     currentEnum = MainMenu;
     
     InitAudioDevice();
