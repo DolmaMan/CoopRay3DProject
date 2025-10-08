@@ -12,6 +12,5 @@ namespace UI {
     void DrawAddMenu();
     void DrawEditMenu();
     void DrawDeleteMenu();
-    void LoadMenuTextures();
 }
 
