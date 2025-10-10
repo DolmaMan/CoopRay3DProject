@@ -8,7 +8,6 @@
 namespace UI {
     void DrawMainMenu();
     void DrawExitMenu();
-    void GetScene();
     void DrawAddMenu();
     void DrawEditMenu();
     void DrawDeleteMenu();
