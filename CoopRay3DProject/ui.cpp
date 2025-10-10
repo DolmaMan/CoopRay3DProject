@@ -4,7 +4,19 @@ bool addMenuRequested = false,
      deleteMenuRequested = false;
 
 void UI::DrawMainMenu() {
-    GetScene();
+    if (
+        !addMenuRequested &&
+        !editMenuRequested &&
+        !deleteMenuRequested
+        ) 
+    {
+        cameraController.HandleInput();
+        cameraController.Update();
+    }
+    BeginTextureMode(screenTexture);
+    ClearBackground(RAYWHITE);
+    Drawer::DrawScene(cameraController);
+    EndTextureMode();
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -52,17 +64,6 @@ void UI::DrawMainMenu() {
         DrawDeleteMenu();
     }
 
-    /*DrawRectangle(20, 10, 120, 30, Color{ 200, 200, 200, 255 });
-    DrawRectangleLines(20, 10, 120, 30, GRAY);
-    DrawText("Add Shape", 35, 17, 16, BLACK);*/
-
-    /*DrawRectangle(150, 10, 120, 30, Color{ 200, 200, 200, 255 });
-    DrawRectangleLines(150, 10, 120, 30, GRAY);
-    DrawText("Delete Shape", 160, 17, 16, BLACK);*/
-
-    /*DrawRectangle(280, 10, 120, 30, Color{ 200, 200, 200, 255 });
-    DrawRectangleLines(280, 10, 120, 30, GRAY);
-    DrawText("Edit Shape", 295, 17, 16, BLACK);*/
 
     DrawRectangle(GetScreenWidth() - 300, 50, 300, GetScreenHeight() - 50, Color{ 240, 240, 240, 255 });
     DrawRectangle(GetScreenWidth() - 300, 50, 1, GetScreenHeight() - 50, GRAY);
@@ -111,22 +112,29 @@ void UI::DrawExitMenu() {
 
 void UI::DrawAddMenu() 
 {
-    Rectangle menuRect = { 320.0, 160.0, 600, 400 };
+    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
     DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
     DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
 
-    Rectangle rect = { menuRect.x, menuRect.y, 100, 10 };
+    static Rectangle rect = { menuRect.x, menuRect.y, 100, 10 };
     static char* str = new char[100] {'\0'};
     if (GuiTextBox(rect, str, 100, true)) {
 
     };
-    Rectangle rect2 = { menuRect.x, menuRect.y + 100, 100, 20 };
-    static const char* str2 = "Cube;Sphere;Helix";
+    static const char* str2 = "Circle;Ellipse;Helix";
     static int selectedIndex = 0;
     static bool editMode = false;
-    if (GuiDropdownBox(rect2, str2, &selectedIndex, editMode)) {
+    static Rectangle topRect = { menuRect.x, menuRect.y + 25, 400, 25 };
+    if (GuiDropdownBox({menuRect.x + 100, menuRect.y + 100, 100, 20 }, str2, &selectedIndex, editMode)) {
         editMode = !editMode;
     }
+
+    if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
+    {
+        addMenuRequested = false;
+    }
+    
+
 }
 
 void UI::DrawEditMenu() 
@@ -137,15 +145,4 @@ void UI::DrawEditMenu()
 void UI::DrawDeleteMenu() 
 {
 
-}
-
-void UI::GetScene()
-{
-    cameraController.HandleInput();
-    cameraController.Update();
-
-    BeginTextureMode(screenTexture);
-    ClearBackground(RAYWHITE);
-    Drawer::DrawScene(cameraController);
-    EndTextureMode();
 }
