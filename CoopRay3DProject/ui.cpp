@@ -21,7 +21,7 @@ void UI::DrawMainMenu() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE); //—ÂÚÍ‡
+    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE); //√ë√•√≤√™√†
 
 
     DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
@@ -98,7 +98,7 @@ void UI::DrawExitMenu() {
     ClearBackground(RAYWHITE);
 
 
-    // —ƒ≈À¿“‹ Ã≈Õﬁ ¬€’Œƒ¿
+    // √ë√Ñ√Ö√ã√Ä√í√ú √å√Ö√ç√û √Ç√õ√ï√é√Ñ√Ä
     Color BgCol = { 0, 0, 0, 200 };
     DrawRectangle(0, 200, GetScreenWidth(), 200, BgCol);
     DrawText("Are you sure you want to exit program? [Y/N]", 40, 270, 30, WHITE);
