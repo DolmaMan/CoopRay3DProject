@@ -1,5 +1,7 @@
 #pragma once
 #include <raylib.h>
+#include"config.h"
+#include"Figures.h"
 #include "initProgram.h"
 
 class Drawer {

@@ -88,8 +88,9 @@ void UI::DrawMainMenu() {
     EndDrawing();
 
     if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
-        PlaySound(ListSounds["General_Quitgame.wav"]);
-        currentEnum = MenusEnum::ExitMenu;
+        //PlaySound(ListSounds["General_Quitgame.wav"]);
+        //currentEnum = MenusEnum::ExitMenu;
+        exitWindow = true;  //Вернуть в конце
     }
 }
 
@@ -129,9 +130,30 @@ void UI::DrawAddMenu()
         editMode = !editMode;
     }
 
+    static float centerX = 10;
+    static float centerY = 0;
+    static float centerZ = 0;
+    static float radius = 10;
+    static float rotationAxisX = 0;
+    static float rotationAxisY = 0;
+    static float rotationAxisZ = 0;
+    static float rotationAngle = 0;
+
     if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
     {
         addMenuRequested = false;
+        std::unordered_map<std::string, float> props;
+        props["centerX"] = centerX;
+        props["centerY"] = centerY;
+        props["centerZ"] = centerZ;
+        props["radius"] = radius;
+        props["rotationAxisX"] = rotationAxisX;
+        props["rotationAxisY"] = rotationAxisY;
+        props["rotationAxisZ"] = rotationAxisZ;
+        props["rotationAngle"] = rotationAngle;
+        
+        Figure::Figure("Circle", props, GetRandomColor());
+
     }
     
 

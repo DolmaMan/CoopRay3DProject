@@ -12,7 +12,7 @@
 Rectangle screenTextureRect;
 Rectangle addMenuTextureRect;
 
-std::map<std::string, Sound> ListSounds;
+std::unordered_map<std::string, Sound> ListSounds;
 
 bool exitWindowRequested = false;   // Flag to request window to exit
 bool exitWindow = false;
@@ -23,6 +23,8 @@ RenderTexture screenTexture;
 RenderTexture addMenuTexture;
 
 MenusEnum currentEnum;
+
+std::unordered_map<std::string, std::vector<Figure>> mapFigures;
 
 void LoadSounds() {
     std::string folder_path = "..\\assets\\audio"; // Путь к папке (в данном случае, текущая папка)
@@ -52,6 +54,7 @@ int main()
     screenTextureRect = { 0.0f, 0.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
     
     currentEnum = MainMenu;
+
     
     InitAudioDevice();
     LoadSounds();

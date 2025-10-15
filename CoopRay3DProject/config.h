@@ -1,13 +1,14 @@
 #pragma once
 #include <raylib.h>
+#include<vector>
 #include<string>
-#include<map>
+#include<unordered_map>
 
 struct Camera3DController;
 
 extern Rectangle screenTextureRect;
 
-extern std::map<std::string, Sound> ListSounds;
+extern std::unordered_map<std::string, Sound> ListSounds;
 
 extern bool exitWindow;
 
@@ -17,3 +18,7 @@ extern RenderTexture screenTexture;
 
 enum MenusEnum { MainMenu, ExitMenu };
 extern MenusEnum currentEnum;
+
+extern class Figure;
+
+extern std::unordered_map<std::string, std::vector<Figure>> mapFigures;
