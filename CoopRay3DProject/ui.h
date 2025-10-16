@@ -11,5 +11,11 @@ namespace UI {
     void DrawAddMenu();
     void DrawEditMenu();
     void DrawDeleteMenu();
+    
+    void UpdateFigureList();
+    void UpdateFigureList(std::multimap<std::string, Figure*>::iterator excludingIter);
+    void DrawFigureList();
+
+    bool isElementHighlighted();
 }
 

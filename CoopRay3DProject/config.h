@@ -2,11 +2,18 @@
 #include <raylib.h>
 #include<vector>
 #include<string>
+#include<map>
 #include<unordered_map>
 
 struct Camera3DController;
 
+extern int screenWidth;
+extern int screenHeight;
+
 extern Rectangle screenTextureRect;
+
+extern Rectangle bigRect;
+extern Rectangle listFiguresRect;
 
 extern std::unordered_map<std::string, Sound> ListSounds;
 
@@ -21,4 +28,4 @@ extern MenusEnum currentEnum;
 
 extern class Figure;
 
-extern std::unordered_map<std::string, std::vector<Figure>> mapFigures;
+extern std::multimap<std::string, Figure*> mapFigures;

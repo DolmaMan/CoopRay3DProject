@@ -1,17 +1,48 @@
 #include "Figures.h"
 
-Figure::Figure(std::string figureName, std::unordered_map<std::string, float> p)
+Figure::Figure(std::string fn, std::unordered_map<std::string, float> p)
 {
 	Properties = p;
+    figureName = fn;
+    Properties["id"] = CountObjects++;
     color = RED;
-    mapFigures[figureName].push_back((Figure)*this);
+    mapFigures.insert({ figureName, this });
+    //mapFigures[figureName].push_back(this);
 }
 
-Figure::Figure(std::string figureName, std::unordered_map<std::string, float> p, Color color)
+Figure::Figure(std::string fn, std::unordered_map<std::string, float> p, Color color)
 {
     Properties = p;
+    figureName = fn;
+    Properties["id"] = CountObjects++;
     this->color = color;
-    mapFigures[figureName].push_back((Figure)*this);
+    mapFigures.insert({ figureName, this });
+    //mapFigures.push_back(this);
+}
+
+Figure::~Figure()
+{
+    CountObjects--;
+    auto it = mapFigures.begin();
+    for (; it != mapFigures.end(); it++) {
+        if ((*it).second->Properties["id"] == this->Properties["id"]) {
+            mapFigures.erase(it);
+            break;
+        }
+    }
+    ChangeAllId(it);
+}
+
+bool Figure::operator==( Figure* f1)
+{
+    return (*this).Properties.at("id") == (*f1).Properties.at("id");
+}
+
+void Figure::ChangeAllId(std::multimap<std::string, Figure*>::iterator itFrom)
+{
+    for (auto it = itFrom; it != mapFigures.end(); it++) {
+        (*(*it).second).Properties["id"]--;
+    }
 }
 
 Color GetRandomColor()

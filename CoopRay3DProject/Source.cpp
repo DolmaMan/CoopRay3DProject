@@ -8,9 +8,14 @@
 
 #include "config.h"
 
+int screenWidth;
+int screenHeight;
 
 Rectangle screenTextureRect;
 Rectangle addMenuTextureRect;
+
+Rectangle bigRect;
+Rectangle listFiguresRect;
 
 std::unordered_map<std::string, Sound> ListSounds;
 
@@ -24,7 +29,7 @@ RenderTexture addMenuTexture;
 
 MenusEnum currentEnum;
 
-std::unordered_map<std::string, std::vector<Figure>> mapFigures;
+std::multimap<std::string, Figure*> mapFigures;
 
 void LoadSounds() {
     std::string folder_path = "..\\assets\\audio"; // Путь к папке (в данном случае, текущая папка)
@@ -50,16 +55,19 @@ int main()
     InitProgram();
     SetExitKey(KEY_NULL);
 
-    screenTexture = LoadRenderTexture(GetScreenWidth()-300, GetScreenHeight()-80);
+    screenWidth = GetScreenWidth();
+    screenHeight = GetScreenHeight();
+
+    screenTexture = LoadRenderTexture(screenWidth - 300, screenHeight - 80);
     screenTextureRect = { 0.0f, 0.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
     
     currentEnum = MainMenu;
 
+    bigRect = { 0.0f ,50.0f, (float)screenWidth, (float)screenHeight - 80 };
+    listFiguresRect = { (float)screenWidth - 300, 135, 300, (float)screenHeight - 165 };
     
     InitAudioDevice();
     LoadSounds();
-
-
 
     while (!exitWindow) {
         switch (currentEnum) {

@@ -9,20 +9,38 @@ void Drawer::DrawScene(const Camera3DController& cameraController) {
     DrawLine3D({ 0, 0, 0 }, { 0, 5, 0 }, GREEN);  
     DrawLine3D({ 0, 0, 0 }, { 0, 0, 5 }, BLUE);   
 
-    //if(mapFigures.count("Circle") != 0)
-        for (Figure& circle : mapFigures["Circle"]) {
-            Vector3 center = { circle.Properties["centerX"], circle.Properties["centerY"], circle.Properties["centerZ"] };
-            Vector3 rotationAxis = { circle.Properties["rotationAxisX"], circle.Properties["rotationAxisY"], circle.Properties["rotationAxisZ"] };
-            DrawCircle3D(center, circle.Properties["radius"], rotationAxis, circle.Properties["rotationAngle"], circle.color);
+    for (auto pair : mapFigures) 
+    {
+        if (pair.first == "Circle") 
+        {
+            Vector3 center = 
+            { 
+                (*pair.second).Properties["centerX"],
+                (*pair.second).Properties["centerY"],
+                (*pair.second).Properties["centerZ"]
+            };
+            Vector3 rotationAxis = 
+            {
+                (*pair.second).Properties["rotationAxisX"],
+                (*pair.second).Properties["rotationAxisY"],
+                (*pair.second).Properties["rotationAxisZ"]
+            };
+            DrawCircle3D(
+                center,
+                (*pair.second).Properties["radius"],
+                rotationAxis,
+                (*pair.second).Properties["rotationAngle"],
+                (*pair.second).color
+            );
         }
-    if(mapFigures.count("Ellipse"))
-        for (Figure& ellipse : mapFigures["Ellipse"]) {
-            
-        }
-    if (mapFigures.count("Helix"))
-        for (Figure& ellipse : mapFigures["Helix"]) {
+        else if (pair.first == "Ellipse") {
 
         }
+        else if (pair.first == "Helix") {
+
+        }
+    }
+    
 
     /*DrawCube({0.0f, 0.0f, 0.0f}, 2.0f, 2.0f, 2.0f, RED);
     DrawCubeWires({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, MAROON);

@@ -23,67 +23,44 @@ void UI::DrawMainMenu() {
 
     DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE); //Ñåòêà
 
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 255);
 
     DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
     DrawText("Right mouse button or TAB: Free camera mode", 10, 80, 16, DARKGRAY);
     DrawText("R: Reset camera", 10, 100, 16, DARKGRAY);
     DrawText("ESC: Exit", 10, 120, 16, DARKGRAY);
 
-    DrawRectangle(0, 0, GetScreenWidth(), 50, Color{ 230, 230, 230, 255 });
-    DrawRectangle(0, 50, GetScreenWidth(), 1, GRAY);
+    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape")) { addMenuRequested = true; };
+    if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape")) 
+    {
+        if(isElementHighlighted())
+            deleteMenuRequested = true; 
+    };
+    if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape")) 
+    { 
+        if (isElementHighlighted())
+            editMenuRequested = true; 
+    };
 
+    if (addMenuRequested) { DrawAddMenu(); }
+    else if (editMenuRequested) { DrawEditMenu(); }
+    else if(deleteMenuRequested) { DrawDeleteMenu(); }
+    
+    DrawRectangleLinesEx(bigRect, 1, DARKGRAY);
+    DrawRectangleLinesEx(listFiguresRect, 1, DARKGRAY);
+
+    DrawText("SHAPES LIST", screenWidth - 290, 65, 20, BLACK);
+
+    DrawText("ID", screenWidth - 290, 110, 16, DARKGRAY);
+    DrawText("Type", screenWidth - 250, 110, 16, DARKGRAY);
+    DrawText("Position", screenWidth - 190, 110, 16, DARKGRAY);
+    
+    DrawLine(screenWidth - 300 + 1, 50, screenWidth - 300, 135, DARKGRAY);
+    DrawLine(screenWidth - 300 + 1, 95, screenWidth, 95, DARKGRAY);
     
 
-    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 255);
-
-    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape"))
-    {
-        addMenuRequested = true;
-    };
-
-    if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape"))
-    {
-        deleteMenuRequested = true;
-    };
-
-    if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape"))
-    {
-        editMenuRequested = true;
-    };
-
-    if (addMenuRequested)
-    {
-        DrawAddMenu();
-    }
-    else if (editMenuRequested) 
-    {
-        DrawEditMenu();
-    }
-    else if(deleteMenuRequested)
-    {
-        DrawDeleteMenu();
-    }
-
-
-    DrawRectangle(GetScreenWidth() - 300, 50, 300, GetScreenHeight() - 50, Color{ 240, 240, 240, 255 });
-    DrawRectangle(GetScreenWidth() - 300, 50, 1, GetScreenHeight() - 50, GRAY);
-
-    DrawText("SHAPES LIST", GetScreenWidth() - 290, 65, 20, BLACK);
-    DrawRectangle(GetScreenWidth() - 300, 95, 300, 1, GRAY);
-
-
-    DrawText("ID", GetScreenWidth() - 290, 110, 16, DARKGRAY);
-    DrawText("Type", GetScreenWidth() - 250, 110, 16, DARKGRAY);
-    DrawText("Position", GetScreenWidth() - 190, 110, 16, DARKGRAY);
-
-    DrawRectangle(GetScreenWidth() - 300, 135, 300, 1, GRAY);
-
-
-    DrawRectangle(0, GetScreenHeight() - 30, GetScreenWidth(), 30, Color{ 240, 240, 240, 255 });
-    DrawRectangle(0, GetScreenHeight() - 30, GetScreenWidth(), 1, GRAY);
-    DrawText("", 10, GetScreenHeight() - 22, 16, DARKGRAY);
-
-    DrawFPS(GetScreenWidth() - 80, GetScreenHeight() - 25);
+    DrawFigureList();
+    DrawFPS(screenWidth - 80, screenHeight - 25);
 
     EndDrawing();
 
@@ -101,7 +78,7 @@ void UI::DrawExitMenu() {
 
     // ÑÄÅËÀÒÜ ÌÅÍÞ ÂÛÕÎÄÀ
     Color BgCol = { 0, 0, 0, 200 };
-    DrawRectangle(0, 200, GetScreenWidth(), 200, BgCol);
+    DrawRectangle(0, 200, screenWidth, 200, BgCol);
     DrawText("Are you sure you want to exit program? [Y/N]", 40, 270, 30, WHITE);
 
     EndDrawing();
@@ -152,8 +129,8 @@ void UI::DrawAddMenu()
         props["rotationAxisZ"] = rotationAxisZ;
         props["rotationAngle"] = rotationAngle;
         
-        Figure::Figure("Circle", props, GetRandomColor());
-
+        Figure* fig = new Figure("Circle", props, GetRandomColor());
+        UpdateFigureList();
     }
     
 
@@ -161,10 +138,98 @@ void UI::DrawAddMenu()
 
 void UI::DrawEditMenu() 
 {
-
+    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
+    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
+    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
 }
 
 void UI::DrawDeleteMenu() 
 {
+    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
+    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
+    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
+}
 
+void UI::UpdateFigureList()
+{
+    Rectangle figureInMenuRect{ listFiguresRect.x, listFiguresRect.y, listFiguresRect.width, 30 };
+    for (auto& pair : mapFigures) {
+        pair.second->figureRect = figureInMenuRect;
+        pair.second->isHighlighted = false;
+        figureInMenuRect.y += 29;
+    }
+}
+
+void UI::UpdateFigureList(std::multimap<std::string, Figure*>::iterator excludingIter)
+{
+    Rectangle figureInMenuRect{ listFiguresRect.x, listFiguresRect.y, listFiguresRect.width, 30 };
+    for (auto it = mapFigures.begin(); it != mapFigures.end(); it++) {
+        (*it).second->figureRect = figureInMenuRect;
+        if(it != excludingIter)
+            (*it).second->isHighlighted = false;
+        figureInMenuRect.y += 29;
+    }
+}
+
+void UI::DrawFigureList()
+{
+    if (CheckCollisionPointRec(GetMousePosition(), listFiguresRect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        for (auto it = mapFigures.begin(); it != mapFigures.end();it++) {
+            if (CheckCollisionPointRec(GetMousePosition(), (*it).second->figureRect)) {
+                if ((*it).second->isHighlighted) {
+                    UpdateFigureList();
+                }
+                else {
+                    (*it).second->isHighlighted = true;
+                    UpdateFigureList(it);
+                    DrawRectangleLinesEx((*it).second->figureRect, 2, BLUE);
+                }
+            }
+            else {
+                DrawRectangleLinesEx((*it).second->figureRect, 1, BLACK);
+            }
+
+            DrawText(
+                std::to_string((int)(*(*it).second).Properties["id"]).c_str(),
+                (*it).second->figureRect.x + 10,
+                (*it).second->figureRect.y + 10,
+                16, BLACK
+            );
+            DrawText(
+                (*(*it).second).figureName.c_str(),
+                (*it).second->figureRect.x + 50,
+                (*it).second->figureRect.y + 10,
+                16, BLACK
+            );
+        }
+    }
+    else {
+        for (auto& pair : mapFigures) {
+            if(pair.second->isHighlighted)
+                DrawRectangleLinesEx(pair.second->figureRect, 2, BLUE);
+            else
+                DrawRectangleLinesEx(pair.second->figureRect, 1, BLACK);
+
+            DrawText(
+                std::to_string((int)(*pair.second).Properties["id"]).c_str(),
+                pair.second->figureRect.x + 10,
+                pair.second->figureRect.y + 10,
+                16, BLACK
+            );
+            DrawText(
+                (*pair.second).figureName.c_str(),
+                pair.second->figureRect.x + 50,
+                pair.second->figureRect.y + 10,
+                16, BLACK
+            );
+        }
+    }
+}
+
+bool UI::isElementHighlighted()
+{
+    for (auto fig : mapFigures)
+        if (fig.second->isHighlighted)
+            return true;
+    return false;
 }
