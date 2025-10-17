@@ -29,7 +29,7 @@ RenderTexture addMenuTexture;
 
 MenusEnum currentEnum;
 
-std::multimap<std::string, Figure*> mapFigures;
+std::vector<figure_variant> vecFigures;
 
 void LoadSounds() {
     std::string folder_path = "..\\assets\\audio"; // Путь к папке (в данном случае, текущая папка)

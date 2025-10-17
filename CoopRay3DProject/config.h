@@ -1,8 +1,8 @@
 #pragma once
-#include <raylib.h>
+#include<raylib.h>
 #include<vector>
 #include<string>
-#include<map>
+#include<variant>
 #include<unordered_map>
 
 struct Camera3DController;
@@ -26,6 +26,6 @@ extern RenderTexture screenTexture;
 enum MenusEnum { MainMenu, ExitMenu };
 extern MenusEnum currentEnum;
 
-extern class Figure;
+class Circle;
+class Ellipse;
 
-extern std::multimap<std::string, Figure*> mapFigures;

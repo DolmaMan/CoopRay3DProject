@@ -111,25 +111,25 @@ void UI::DrawAddMenu()
     static float centerY = 0;
     static float centerZ = 0;
     static float radius = 10;
-    static float rotationAxisX = 0;
-    static float rotationAxisY = 0;
-    static float rotationAxisZ = 0;
+    static float rotationAxisX = 0.25;
+    static float rotationAxisY = 0.25;
+    static float rotationAxisZ = 0.25;
     static float rotationAngle = 0;
 
     if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
     {
         addMenuRequested = false;
-        std::unordered_map<std::string, float> props;
-        props["centerX"] = centerX;
-        props["centerY"] = centerY;
-        props["centerZ"] = centerZ;
-        props["radius"] = radius;
-        props["rotationAxisX"] = rotationAxisX;
-        props["rotationAxisY"] = rotationAxisY;
-        props["rotationAxisZ"] = rotationAxisZ;
-        props["rotationAngle"] = rotationAngle;
-        
-        Figure* fig = new Figure("Circle", props, GetRandomColor());
+
+        Circle::CircleParams params;
+        params.center = { centerX, centerY, centerZ };
+        params.rotationAxis = { rotationAxisX , rotationAxisY , rotationAxisZ };
+        params.color = GetRandomColor();
+        params.radius = radius;
+        params.rotationAngle = rotationAngle;
+
+        Circle* circle = new Circle(params);
+        vecFigures.emplace_back(circle);
+
         UpdateFigureList();
     }
     
@@ -153,74 +153,96 @@ void UI::DrawDeleteMenu()
 void UI::UpdateFigureList()
 {
     Rectangle figureInMenuRect{ listFiguresRect.x, listFiguresRect.y, listFiguresRect.width, 30 };
-    for (auto& pair : mapFigures) {
-        pair.second->figureRect = figureInMenuRect;
-        pair.second->isHighlighted = false;
+    for (auto& fig : vecFigures) {
+        std::visit([&figureInMenuRect](auto&& arg) 
+            {
+                (*arg).Properties.figureInMenuRect = figureInMenuRect;
+                (*arg).Properties.isHighlightedInMenu = false;
+            },
+            fig
+        );
         figureInMenuRect.y += 29;
     }
 }
 
-void UI::UpdateFigureList(std::multimap<std::string, Figure*>::iterator excludingIter)
+void UI::UpdateFigureList(Rectangle excludingRect)
 {
     Rectangle figureInMenuRect{ listFiguresRect.x, listFiguresRect.y, listFiguresRect.width, 30 };
-    for (auto it = mapFigures.begin(); it != mapFigures.end(); it++) {
-        (*it).second->figureRect = figureInMenuRect;
-        if(it != excludingIter)
-            (*it).second->isHighlighted = false;
+    for (auto& fig : vecFigures) {
+        if (excludingRect.y != figureInMenuRect.y) {
+            std::visit([&figureInMenuRect](auto&& arg)
+                {
+                    (*arg).Properties.figureInMenuRect = figureInMenuRect;
+                    (*arg).Properties.isHighlightedInMenu = false;
+                },
+                fig
+            );
+        }
         figureInMenuRect.y += 29;
     }
 }
 
 void UI::DrawFigureList()
 {
+    int index = 1;
     if (CheckCollisionPointRec(GetMousePosition(), listFiguresRect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        for (auto it = mapFigures.begin(); it != mapFigures.end();it++) {
-            if (CheckCollisionPointRec(GetMousePosition(), (*it).second->figureRect)) {
-                if ((*it).second->isHighlighted) {
-                    UpdateFigureList();
-                }
-                else {
-                    (*it).second->isHighlighted = true;
-                    UpdateFigureList(it);
-                    DrawRectangleLinesEx((*it).second->figureRect, 2, BLUE);
-                }
-            }
-            else {
-                DrawRectangleLinesEx((*it).second->figureRect, 1, BLACK);
-            }
+        for (auto& fig : vecFigures) {
+            std::visit([&index](auto&& arg)
+                {
+                    if (CheckCollisionPointRec(GetMousePosition(), (*arg).Properties.figureInMenuRect)) {
+                        if ((*arg).Properties.isHighlightedInMenu) {
+                            UpdateFigureList();
+                        }
+                        else {
+                            (*arg).Properties.isHighlightedInMenu = true;
+                            UpdateFigureList((*arg).Properties.figureInMenuRect);
+                            DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 2, BLUE);
+                        }
+                    }
+                    else {
+                        DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 1, BLACK);
+                    }
 
-            DrawText(
-                std::to_string((int)(*(*it).second).Properties["id"]).c_str(),
-                (*it).second->figureRect.x + 10,
-                (*it).second->figureRect.y + 10,
-                16, BLACK
-            );
-            DrawText(
-                (*(*it).second).figureName.c_str(),
-                (*it).second->figureRect.x + 50,
-                (*it).second->figureRect.y + 10,
-                16, BLACK
+                    DrawText(
+                        std::to_string(index++).c_str(),
+                        (*arg).Properties.figureInMenuRect.x + 10,
+                        (*arg).Properties.figureInMenuRect.y + 10,
+                        16, BLACK
+                    );
+                    DrawText(
+                        (*arg).getClassName().c_str(),
+                        (*arg).Properties.figureInMenuRect.x + 50,
+                        (*arg).Properties.figureInMenuRect.y + 10,
+                        16, BLACK
+                    );
+                },
+                fig
             );
         }
     }
     else {
-        for (auto& pair : mapFigures) {
-            if(pair.second->isHighlighted)
-                DrawRectangleLinesEx(pair.second->figureRect, 2, BLUE);
-            else
-                DrawRectangleLinesEx(pair.second->figureRect, 1, BLACK);
+        for (auto& fig : vecFigures) {
+            std::visit([&index](auto&& arg)
+                {
+                    if ((*arg).Properties.isHighlightedInMenu)
+                        DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 2, BLUE);
+                    else
+                        DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 1, BLACK);
 
-            DrawText(
-                std::to_string((int)(*pair.second).Properties["id"]).c_str(),
-                pair.second->figureRect.x + 10,
-                pair.second->figureRect.y + 10,
-                16, BLACK
-            );
-            DrawText(
-                (*pair.second).figureName.c_str(),
-                pair.second->figureRect.x + 50,
-                pair.second->figureRect.y + 10,
-                16, BLACK
+                    DrawText(
+                        std::to_string(index++).c_str(),
+                        (*arg).Properties.figureInMenuRect.x + 10,
+                        (*arg).Properties.figureInMenuRect.y + 10,
+                        16, BLACK
+                    );
+                    DrawText(
+                        (*arg).getClassName().c_str(),
+                        (*arg).Properties.figureInMenuRect.x + 50,
+                        (*arg).Properties.figureInMenuRect.y + 10,
+                        16, BLACK
+                    );
+                },
+                fig
             );
         }
     }
@@ -228,8 +250,11 @@ void UI::DrawFigureList()
 
 bool UI::isElementHighlighted()
 {
-    for (auto fig : mapFigures)
-        if (fig.second->isHighlighted)
-            return true;
+    for (auto fig : vecFigures) {
+        std::visit([](auto arg)
+            { if ((*arg).Properties.isHighlightedInMenu) return true; },
+            fig
+        );
+    }
     return false;
 }
