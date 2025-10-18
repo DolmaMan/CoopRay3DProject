@@ -107,28 +107,60 @@ void UI::DrawAddMenu()
         editMode = !editMode;
     }
 
-    static float centerX = 10;
+    
+    static float centerX = 5;
     static float centerY = 0;
     static float centerZ = 0;
-    static float radius = 10;
-    static float rotationAxisX = 0.25;
-    static float rotationAxisY = 0.25;
-    static float rotationAxisZ = 0.25;
-    static float rotationAngle = 0;
+
+    static float radiusC = 2;
+
+    static float circleStepHelix = 2;
+    static float heightHelix = 10;
+
+    //Угол наклона принимать в градусах
+    static float tiltAngleX = 90;
+    static float tiltAngleY = 0;
+    static float tiltAngleZ = 0;
+
+    static float radiusElX = 8;
+    static float radiusElY = 2;
+    static float radiusElZ = 4;
 
     if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
     {
         addMenuRequested = false;
 
-        Circle::CircleParams params;
+        //Пример создания диска
+        /*Circle::CircleParams params;
         params.center = { centerX, centerY, centerZ };
-        params.rotationAxis = { rotationAxisX , rotationAxisY , rotationAxisZ };
+        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
         params.color = GetRandomColor();
-        params.radius = radius;
-        params.rotationAngle = rotationAngle;
+        params.radius = radiusC;
 
         Circle* circle = new Circle(params);
-        vecFigures.emplace_back(circle);
+        vecFigures.emplace_back(circle);*/
+
+        //Пример создания эллипса
+        /*Ellipse::EllipseParams params;
+        params.center = { centerX, centerY, centerZ };
+        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
+        params.color = GetRandomColor();
+        params.radius = { radiusElX, radiusElY, radiusElZ };
+
+        Ellipse* ellipse = new Ellipse(params);
+        vecFigures.emplace_back(ellipse);*/
+
+        //Пример создания хеликса
+        Helix::HelixParams params;
+        params.center = { centerX, centerY, centerZ };
+        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
+        params.color = GetRandomColor();
+        params.radius = radiusC;
+        params.circleStep = circleStepHelix;
+        params.height = heightHelix;
+
+        Helix* helix = new Helix(params);
+        vecFigures.emplace_back(helix);
 
         UpdateFigureList();
     }

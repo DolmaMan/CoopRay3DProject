@@ -43,9 +43,8 @@ class Circle : public Figure
 public:
 	struct CircleParams : Figure::FigureParams {
 		Vector3 center;
-		Vector3 rotationAxis;
+		Vector3 tiltAngles;
 		float radius;
-		float rotationAngle;
 	};
 
 	CircleParams Properties;
@@ -62,18 +61,39 @@ class Ellipse : public Figure {
 public:
 	struct EllipseParams : Figure::FigureParams {
 		Vector3 center;
-		Vector3 rotationAxis;
-		float radius;
-		float rotationAngle;
+		Vector3 tiltAngles;
+		Vector3 radius;
 	};
 
 	EllipseParams Properties;
 
 	Ellipse(EllipseParams p) : Properties(p) {}
 
+	static void DrawEllipse(Ellipse* ellipse, int segments = 320);
 	std::string getClassName() const override { return "Ellipse"; }
 };
+
+class Helix : public Figure {
+
+public:
+	struct HelixParams : Figure::FigureParams {
+		Vector3 center;
+		Vector3 tiltAngles;
+		float radius;
+		float height;
+		float circleStep;
+	};
+
+	HelixParams Properties;
+
+	Helix(HelixParams p) : Properties(p) {}
+
+	static void DrawHelix(Helix* helix);
+	std::string getClassName() const override { return "Helix"; }
+};
+
+
 Color GetRandomColor();
 
-using figure_variant = std::variant<Circle*, Ellipse*>;
+using figure_variant = std::variant<Circle*, Ellipse*, Helix*>;
 extern std::vector<figure_variant> vecFigures;

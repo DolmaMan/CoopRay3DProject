@@ -62,10 +62,9 @@ Color GetRandomColor()
 Circle::Circle(CircleParams p)
 {
     Properties.center = p.center;
-    Properties.rotationAxis = p.rotationAxis;
+    Properties.tiltAngles = p.tiltAngles;
     Properties.color = p.color;
     Properties.radius = p.radius;
-    Properties.rotationAngle = p.rotationAngle;
     Properties.figureInMenuRect = p.figureInMenuRect;
     Properties.isHighlightedInMenu = p.isHighlightedInMenu;
 }
@@ -79,156 +78,107 @@ Circle::~Circle()
 
 void Circle::DrawCircle(Circle* circle, int segments)
 {
-    //// Нормализуем ось вручную
-    //Vector3 axis = (*circle).Properties.rotationAxis;
-    //float length = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
-    //if (length > 0) {
-    //    axis.x /= length;
-    //    axis.y /= length;
-    //    axis.z /= length;
+    //// Создаем точки на окружности
+    //Vector3 rotationAxis = (*circle).Properties.rotationAxis;
+
+    //float length = sqrtf(
+    //    rotationAxis.x * rotationAxis.x +
+    //    rotationAxis.y * rotationAxis.y +
+    //    rotationAxis.z * rotationAxis.z
+    //);
+    //if (length == 0.0f) {
+    //    rotationAxis = { 0.0f, 1.0f, 0.0f }; // По умолчанию вертикальная плоскость
+    //}
+    //else {
+    //    rotationAxis.x /= length;
+    //    rotationAxis.y /= length;
+    //    rotationAxis.z /= length;
     //}
 
-    //// Находим перпендикулярные векторы
+    //// Находим два перпендикулярных вектора в плоскости окружности
     //Vector3 u, v;
 
-    //// Вектор, не параллельный оси
-    //Vector3 temp = { 1, 0, 0 };
-    //if (fabs(axis.x) > 0.9f) {
-    //    temp = { 0.0f, 1.0f, 0.0f };
+    //// Выбираем вектор, не параллельный нормали
+    //if (fabsf(rotationAxis.x) < fabsf(rotationAxis.y) &&
+    //    fabsf(rotationAxis.x) < fabsf(rotationAxis.z)) {
+    //    u = { 1.0f, 0.0f, 0.0f };
+    //}
+    //else if (fabsf(rotationAxis.y) < fabsf(rotationAxis.z)) {
+    //    u = { 0.0f, 1.0f, 0.0f };
+    //}
+    //else {
+    //    u = { 0.0f, 0.0f, 1.0f };
     //}
 
-    //// u = axis × temp
-    //u.x = axis.y * temp.z - axis.z * temp.y;
-    //u.y = axis.z * temp.x - axis.x * temp.z;
-    //u.z = axis.x * temp.y - axis.y * temp.x;
+    //// Вектор u перпендикулярен нормали
+    //u = {
+    //    u.x - rotationAxis.x * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z),
+    //    u.y - rotationAxis.y * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z),
+    //    u.z - rotationAxis.z * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z)
+    //};
 
     //// Нормализуем u
-    //length = sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
-    //if (length > 0) {
-    //    u.x /= length;
-    //    u.y /= length;
-    //    u.z /= length;
+    //float uLength = sqrtf(u.x * u.x + u.y * u.y + u.z * u.z);
+    //if (uLength > 0.0f) {
+    //    u.x /= uLength;
+    //    u.y /= uLength;
+    //    u.z /= uLength;
     //}
 
-    //// v = axis × u
-    //v.x = axis.y * u.z - axis.z * u.y;
-    //v.y = axis.z * u.x - axis.x * u.z;
-    //v.z = axis.x * u.y - axis.y * u.x;
+    //// Вектор v = normal × u (векторное произведение)
+    //v = {
+    //    rotationAxis.y * u.z - rotationAxis.z * u.y,
+    //    rotationAxis.z * u.x - rotationAxis.x * u.z,
+    //    rotationAxis.x * u.y - rotationAxis.y * u.x
+    //};
 
-    //// Применяем поворот если нужно
-    //if ((*circle).Properties.rotationAngle != 0) {
-    //    float cosA = cos((*circle).Properties.rotationAngle);
-    //    float sinA = sin((*circle).Properties.rotationAngle);
+    //// Создаем и рисуем окружность
+    //Vector3 prevPoint;
+    //bool firstPoint = true;
 
-    //    Vector3 u_new = {
-    //        u.x * cosA - v.x * sinA,
-    //        u.y * cosA - v.y * sinA,
-    //        u.z * cosA - v.z * sinA
+    //for (int i = 0; i <= segments; i++) {
+    //    float angle = (float)i / (float)segments * 2.0f * PI;
+    //    float cosAngle = cosf(angle);
+    //    float sinAngle = sinf(angle);
+
+    //    // Точка в плоскости окружности
+    //    Vector3 pointInPlane = {
+    //        cosAngle * (*circle).Properties.radius,
+    //        sinAngle * (*circle).Properties.radius,
+    //        0.0f
     //    };
 
-    //    Vector3 v_new = {
-    //        u.x * sinA + v.x * cosA,
-    //        u.y * sinA + v.y * cosA,
-    //        u.z * sinA + v.z * cosA
+    //    // Преобразуем в мировые координаты
+    //    Vector3 worldPoint = {
+    //        (*circle).Properties.center.x + pointInPlane.x * u.x + pointInPlane.y * v.x,
+    //        (*circle).Properties.center.y + pointInPlane.x * u.y + pointInPlane.y * v.y,
+    //        (*circle).Properties.center.z + pointInPlane.x * u.z + pointInPlane.y * v.z
     //    };
 
-    //    u = u_new;
-    //    v = v_new;
+    //    // Рисуем линию от предыдущей точки к текущей
+    //    if (!firstPoint) {
+    //        DrawLine3D(prevPoint, worldPoint, (*circle).Properties.color);
+    //    }
+
+    //    prevPoint = worldPoint;
+    //    firstPoint = false;
     //}
+    // Конвертируем градусы в радианы
+    Vector3 tiltAngles = (*circle).Properties.tiltAngles;
 
-    //// Рисуем окружность
-    //for (int i = 0; i < segments; i++) {
-    //    float angle1 = (float)i / segments * 2 * PI;
-    //    float angle2 = (float)(i + 1) / segments * 2 * PI;
+    float tiltXRad = tiltAngles.x * DEG2RAD;
+    float tiltYRad = tiltAngles.y * DEG2RAD;
+    float tiltZRad = tiltAngles.z * DEG2RAD;
 
-    //    Vector3 p1 = {
-    //        (*circle).Properties.center.x + (*circle).Properties.radius * (cos(angle1) * u.x + sin(angle1) * v.x),
-    //        (*circle).Properties.center.y + (*circle).Properties.radius * (cos(angle1) * u.y + sin(angle1) * v.y),
-    //        (*circle).Properties.center.z + (*circle).Properties.radius * (cos(angle1) * u.z + sin(angle1) * v.z)
-    //    };
+    // Предварительно вычисляем синусы и косинусы для каждого наклона
+    float cosX = cosf(tiltXRad);
+    float sinX = sinf(tiltXRad);
+    float cosY = cosf(tiltYRad);
+    float sinY = sinf(tiltYRad);
+    float cosZ = cosf(tiltZRad);
+    float sinZ = sinf(tiltZRad);
 
-    //    Vector3 p2 = {
-    //        (*circle).Properties.center.x + (*circle).Properties.radius * (cos(angle2) * u.x + sin(angle2) * v.x),
-    //        (*circle).Properties.center.y + (*circle).Properties.radius * (cos(angle2) * u.y + sin(angle2) * v.y),
-    //        (*circle).Properties.center.z + (*circle).Properties.radius * (cos(angle2) * u.z + sin(angle2) * v.z)
-    //    };
-    //    DrawSphere(p1, 5, RED);
-    //    DrawLine3D(p1, p2, (*circle).Properties.color);
-    //}
-
-    //// Рисуем диаметры
-    //for (int i = 0; i < 4; i++) {
-    //    float angle = (float)i * PI / 4.0f;
-
-    //    Vector3 p1 = {
-    //        (*circle).Properties.center.x + (*circle).Properties.radius * (cos(angle) * u.x + sin(angle) * v.x),
-    //        (*circle).Properties.center.y + (*circle).Properties.radius * (cos(angle) * u.y + sin(angle) * v.y),
-    //        (*circle).Properties.center.z + (*circle).Properties.radius * (cos(angle) * u.z + sin(angle) * v.z)
-    //    };
-
-    //    Vector3 p2 = {
-    //        (*circle).Properties.center.x - (*circle).Properties.radius * (cos(angle) * u.x + sin(angle) * v.x),
-    //        (*circle).Properties.center.y - (*circle).Properties.radius * (cos(angle) * u.y + sin(angle) * v.y),
-    //        (*circle).Properties.center.z - (*circle).Properties.radius * (cos(angle) * u.z + sin(angle) * v.z)
-    //    };
-
-    //    DrawLine3D(p1, p2, (*circle).Properties.color);
-    //}
-    // Создаем точки на окружности
-
-    float length = sqrtf((*circle).Properties.rotationAxis.x * (*circle).Properties.rotationAxis.x +
-        (*circle).Properties.rotationAxis.y * (*circle).Properties.rotationAxis.y +
-        (*circle).Properties.rotationAxis.z * (*circle).Properties.rotationAxis.z);
-    if (length == 0.0f) {
-        (*circle).Properties.rotationAxis = { 0.0f, 1.0f, 0.0f }; // По умолчанию вертикальная плоскость
-    }
-    else {
-        (*circle).Properties.rotationAxis.x /= length;
-        (*circle).Properties.rotationAxis.y /= length;
-        (*circle).Properties.rotationAxis.z /= length;
-    }
-
-    // Находим два перпендикулярных вектора в плоскости окружности
-    Vector3 u, v;
-
-    // Выбираем вектор, не параллельный нормали
-    if (fabsf((*circle).Properties.rotationAxis.x) < fabsf((*circle).Properties.rotationAxis.y) &&
-        fabsf((*circle).Properties.rotationAxis.x) < fabsf((*circle).Properties.rotationAxis.z)) {
-        u = { 1.0f, 0.0f, 0.0f };
-    }
-    else if (fabsf((*circle).Properties.rotationAxis.y) < fabsf((*circle).Properties.rotationAxis.z)) {
-        u = { 0.0f, 1.0f, 0.0f };
-    }
-    else {
-        u = { 0.0f, 0.0f, 1.0f };
-    }
-
-    // Вектор u перпендикулярен нормали
-    u = {
-        u.x - (*circle).Properties.rotationAxis.x * (u.x * (*circle).Properties.rotationAxis.x +
-        u.y * (*circle).Properties.rotationAxis.y + u.z * (*circle).Properties.rotationAxis.z),
-        u.y - (*circle).Properties.rotationAxis.y * (u.x * (*circle).Properties.rotationAxis.x +
-            u.y * (*circle).Properties.rotationAxis.y + u.z * (*circle).Properties.rotationAxis.z),
-        u.z - (*circle).Properties.rotationAxis.z * (u.x * (*circle).Properties.rotationAxis.x +
-            u.y * (*circle).Properties.rotationAxis.y + u.z * (*circle).Properties.rotationAxis.z)
-    };
-
-    // Нормализуем u
-    float uLength = sqrtf(u.x * u.x + u.y * u.y + u.z * u.z);
-    if (uLength > 0.0f) {
-        u.x /= uLength;
-        u.y /= uLength;
-        u.z /= uLength;
-    }
-
-    // Вектор v = normal × u (векторное произведение)
-    v = {
-        (*circle).Properties.rotationAxis.y * u.z - (*circle).Properties.rotationAxis.z * u.y,
-        (*circle).Properties.rotationAxis.z * u.x - (*circle).Properties.rotationAxis.x * u.z,
-        (*circle).Properties.rotationAxis.x * u.y - (*circle).Properties.rotationAxis.y * u.x
-    };
-
-    // Создаем и рисуем окружность
+    // Создаем точки окружности с учетом наклона
     Vector3 prevPoint;
     bool firstPoint = true;
 
@@ -237,26 +187,230 @@ void Circle::DrawCircle(Circle* circle, int segments)
         float cosAngle = cosf(angle);
         float sinAngle = sinf(angle);
 
-        // Точка в плоскости окружности
-        Vector3 pointInPlane = {
-            cosAngle * (*circle).Properties.radius,
-            sinAngle * (*circle).Properties.radius,
-            0.0f
-        };
+        // Базовая точка в плоскости XZ (без наклона)
+        float x = cosAngle * (*circle).Properties.radius;
+        float y = 0.0f;
+        float z = sinAngle * (*circle).Properties.radius;
 
-        // Преобразуем в мировые координаты
-        Vector3 worldPoint = {
-            (*circle).Properties.center.x + pointInPlane.x * u.x + pointInPlane.y * v.x,
-            (*circle).Properties.center.y + pointInPlane.x * u.y + pointInPlane.y * v.y,
-            (*circle).Properties.center.z + pointInPlane.x * u.z + pointInPlane.y * v.z
+        // Применяем наклон по Z (вращение вокруг Z)
+        float x1 = x * cosZ - y * sinZ;
+        float y1 = x * sinZ + y * cosZ;
+        float z1 = z;
+
+        // Применяем наклон по Y (вращение вокруг Y)
+        float x2 = x1 * cosY + z1 * sinY;
+        float y2 = y1;
+        float z2 = -x1 * sinY + z1 * cosY;
+
+        // Применяем наклон по X (вращение вокруг X)
+        float x3 = x2;
+        float y3 = y2 * cosX - z2 * sinX;
+        float z3 = y2 * sinX + z2 * cosX;
+
+        // Смещаем к центру
+        Vector3 currentPoint = {
+            (*circle).Properties.center.x + x3,
+            (*circle).Properties.center.y + y3,
+            (*circle).Properties.center.z + z3
         };
 
         // Рисуем линию от предыдущей точки к текущей
         if (!firstPoint) {
-            DrawLine3D(prevPoint, worldPoint, (*circle).Properties.color);
+            DrawLine3D(prevPoint, currentPoint, (*circle).Properties.color);
         }
 
-        prevPoint = worldPoint;
+        prevPoint = currentPoint;
+        firstPoint = false;
+    }
+}
+
+void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
+{
+    //for (int i = 0; i <= segments; i++) {
+    //    float theta = (float)i / (float)segments * PI; // от 0 до PI
+
+    //    Vector3 prevPoint;
+    //    bool firstPoint = true;
+
+    //    for (int j = 0; j <= segments; j++) {
+    //        float phi = (float)j / (float)segments * 2.0f * PI; // от 0 до 2*PI
+
+    //        // Параметрическое уравнение эллипсоида
+    //        Vector3 point = {
+    //            (*ellipse).Properties.center.x + (*ellipse).Properties.radius.x * sinf(theta) * cosf(phi),
+    //            (*ellipse).Properties.center.y + (*ellipse).Properties.radius.y * sinf(theta) * sinf(phi),
+    //            (*ellipse).Properties.center.z + (*ellipse).Properties.radius.z * cosf(theta)
+    //        };
+
+    //        if (!firstPoint) {
+    //            DrawLine3D(prevPoint, point, (*ellipse).Properties.color);
+    //        }
+
+    //        prevPoint = point;
+    //        firstPoint = false;
+    //    }
+    //}
+
+    //// Рисуем вертикальные меридианы
+    //for (int j = 0; j <= segments; j++) {
+    //    float phi = (float)j / (float)segments * 2.0f * PI;
+
+    //    Vector3 prevPoint;
+    //    bool firstPoint = true;
+
+    //    for (int i = 0; i <= segments; i++) {
+    //        float theta = (float)i / (float)segments * PI;
+
+    //        Vector3 point = {
+    //            (*ellipse).Properties.center.x + (*ellipse).Properties.radius.x * sinf(theta) * cosf(phi),
+    //            (*ellipse).Properties.center.y + (*ellipse).Properties.radius.y * sinf(theta) * sinf(phi),
+    //            (*ellipse).Properties.center.z + (*ellipse).Properties.radius.z * cosf(theta)
+    //        };
+
+    //        if (!firstPoint) {
+    //            DrawLine3D(prevPoint, point, (*ellipse).Properties.color);
+    //        }
+
+    //        prevPoint = point;
+    //        firstPoint = false;
+    //    }
+    //}
+    float rx = (*ellipse).Properties.tiltAngles.x * DEG2RAD;
+    float ry = (*ellipse).Properties.tiltAngles.y * DEG2RAD;
+    float rz = (*ellipse).Properties.tiltAngles.z * DEG2RAD;
+
+    // Вычисляем синусы и косинусы для каждого угла
+    float cx = cosf(rx), sx = sinf(rx);
+    float cy = cosf(ry), sy = sinf(ry);
+    float cz = cosf(rz), sz = sinf(rz);
+
+    // Функция для применения поворота к точке
+    auto rotatePoint = [&](float x, float y, float z) -> Vector3 {
+        // Поворот вокруг Z
+        float x1 = x * cz - y * sz;
+        float y1 = x * sz + y * cz;
+        float z1 = z;
+
+        // Поворот вокруг Y
+        float x2 = x1 * cy + z1 * sy;
+        float y2 = y1;
+        float z2 = -x1 * sy + z1 * cy;
+
+        // Поворот вокруг X
+        float x3 = x2;
+        float y3 = y2 * cx - z2 * sx;
+        float z3 = y2 * sx + z2 * cx;
+
+        return { 
+            (*ellipse).Properties.center.x + x3,
+            (*ellipse).Properties.center.y + y3,
+            (*ellipse).Properties.center.z + z3 
+        };
+    };
+
+    // Ось X (эллипс в плоскости YZ)
+    Vector3 prevPointX;
+    bool firstPointX = true;
+    for (int i = 0; i <= segments; i++) {
+        float angle = (float)i / (float)segments * 2.0f * PI;
+        Vector3 point = rotatePoint(0, (*ellipse).Properties.radius.y * cosf(angle), (*ellipse).Properties.radius.z * sinf(angle));
+
+        if (!firstPointX) {
+            DrawLine3D(prevPointX, point, (*ellipse).Properties.color);
+        }
+        prevPointX = point;
+        firstPointX = false;
+    }
+
+    // Ось Y (эллипс в плоскости XZ)
+    Vector3 prevPointY;
+    bool firstPointY = true;
+    for (int i = 0; i <= segments; i++) {
+        float angle = (float)i / (float)segments * 2.0f * PI;
+        Vector3 point = rotatePoint((*ellipse).Properties.radius.x * cosf(angle), 0, (*ellipse).Properties.radius.z * sinf(angle));
+
+        if (!firstPointY) {
+            DrawLine3D(prevPointY, point, (*ellipse).Properties.color);
+        }
+        prevPointY = point;
+        firstPointY = false;
+    }
+
+    // Ось Z (эллипс в плоскости XY)
+    Vector3 prevPointZ;
+    bool firstPointZ = true;
+    for (int i = 0; i <= segments; i++) {
+        float angle = (float)i / (float)segments * 2.0f * PI;
+        Vector3 point = rotatePoint((*ellipse).Properties.radius.x * cosf(angle), (*ellipse).Properties.radius.y * sinf(angle), 0);
+
+        if (!firstPointZ) {
+            DrawLine3D(prevPointZ, point, (*ellipse).Properties.color);
+        }
+        prevPointZ = point;
+        firstPointZ = false;
+    }
+}
+
+void Helix::DrawHelix(Helix* helix)
+{
+    float rx = (*helix).Properties.tiltAngles.x * DEG2RAD;
+    float ry = (*helix).Properties.tiltAngles.y * DEG2RAD;
+    float rz = (*helix).Properties.tiltAngles.z * DEG2RAD;
+
+    // Вычисляем синусы и косинусы для каждого угла
+    float cx = cosf(rx), sx = sinf(rx);
+    float cy = cosf(ry), sy = sinf(ry);
+    float cz = cosf(rz), sz = sinf(rz);
+
+    // Рассчитываем общее количество витков на основе высоты и шага
+    float totalCircles = (*helix).Properties.height / (*helix).Properties.circleStep;
+    float totalAngle = totalCircles * 2.0f * PI;
+
+    // Рассчитываем количество сегментов
+    int segments = (int)(totalAngle * 10.0f); // 10 сегментов на радиан
+    if (segments < 36) segments = 36;
+
+    Vector3 prevPoint;
+    bool firstPoint = true;
+
+    for (int i = 0; i <= segments; i++) {
+        // Вычисляем текущий угол и высоту
+        float currentAngle = (float)i / (float)segments * totalAngle;
+        float currentHeight = ((float)i / (float)segments - 0.5f) * (*helix).Properties.height;
+
+        // Вычисляем координаты точки на спирали в локальной системе
+        float localX = (*helix).Properties.radius * cosf(currentAngle);
+        float localY = (*helix).Properties.radius * sinf(currentAngle);
+        float localZ = currentHeight;
+
+        // Применяем наклон (поворот точки)
+        // Поворот вокруг Z
+        float x1 = localX * cz - localY * sz;
+        float y1 = localX * sz + localY * cz;
+        float z1 = localZ;
+
+        // Поворот вокруг Y
+        float x2 = x1 * cy + z1 * sy;
+        float y2 = y1;
+        float z2 = -x1 * sy + z1 * cy;
+
+        // Поворот вокруг X
+        float x3 = x2;
+        float y3 = y2 * cx - z2 * sx;
+        float z3 = y2 * sx + z2 * cx;
+
+        // Смещаем точку в центр
+        Vector3 point = {
+            (*helix).Properties.center.x + x3,
+            (*helix).Properties.center.y + y3,
+            (*helix).Properties.center.z + z3
+        };
+
+        if (!firstPoint) {
+            DrawLine3D(prevPoint, point, (*helix).Properties.color);
+        }
+
+        prevPoint = point;
         firstPoint = false;
     }
 }

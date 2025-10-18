@@ -25,7 +25,3 @@ extern RenderTexture screenTexture;
 
 enum MenusEnum { MainMenu, ExitMenu };
 extern MenusEnum currentEnum;
-
-class Circle;
-class Ellipse;
-

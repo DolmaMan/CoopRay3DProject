@@ -5,9 +5,9 @@ void Drawer::DrawScene(const Camera3DController& cameraController) {
 
     DrawGrid(20, 1.0f);
 
-    DrawLine3D({ 0, 0, 0 }, { 5, 0, 0 }, RED);    
-    DrawLine3D({ 0, 0, 0 }, { 0, 5, 0 }, GREEN);  
-    DrawLine3D({ 0, 0, 0 }, { 0, 0, 5 }, BLUE);   
+    DrawLine3D({ 0, 0, 0 }, { 15, 0, 0 }, RED);    
+    DrawLine3D({ 0, 0, 0 }, { 0, 15, 0 }, GREEN);  
+    DrawLine3D({ 0, 0, 0 }, { 0, 0, 15 }, BLUE);   
 
     for (auto fig : vecFigures) {
         std::visit([](auto&& arg) {
@@ -15,8 +15,11 @@ void Drawer::DrawScene(const Camera3DController& cameraController) {
             if constexpr (std::is_same_v<T, Circle*>) {
                 Circle::DrawCircle(arg);
             }
-            else if constexpr (std::is_same_v<T, Ellipse>) {
-
+            else if constexpr (std::is_same_v<T, Ellipse*>) {
+                Ellipse::DrawEllipse(arg);
+            }
+            else if constexpr (std::is_same_v<T, Helix*>) {
+                Helix::DrawHelix(arg);
             }
             }, fig);
     }
