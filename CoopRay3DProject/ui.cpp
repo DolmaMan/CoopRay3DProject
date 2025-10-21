@@ -107,7 +107,7 @@ void UI::DrawAddMenu()
     DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
     DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
 
-    
+    static bool isWrongFields = false;
 
     static Rectangle centerRectX = { menuRect.x + 40, menuRect.y + 65, 30, 20};
     static Rectangle centerRectY = { menuRect.x + 110, menuRect.y + 65, 30, 20 };
@@ -157,7 +157,42 @@ void UI::DrawAddMenu()
 
         GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius:");
 
-        if (GuiButton(btnRect, "Add")){}
+        if (GuiButton(btnRect, "Add"))
+        {
+            try {
+                Circle::CircleParams params;
+                params.center =
+                {
+                    strtof(centerX.str, NULL),
+                    strtof(centerY.str, NULL),
+                    strtof(centerZ.str, NULL)
+                };
+                params.tiltAngles =
+                {
+                    strtof(angleX.str, NULL),
+                    strtof(angleY.str, NULL),
+                    strtof(angleZ.str, NULL),
+                };
+                float radius = strtof(rad.str, NULL);
+                if (radius == 0)
+                    throw "";
+                else
+                    params.radius = radius;
+                params.color = GetRandomColor();
+
+                Circle* circle = new Circle(params);
+                vecFigures.emplace_back(circle);
+
+                UpdateFigureList();
+
+                addMenuRequested = false;
+                
+            }
+            catch(...) 
+            {
+                isWrongFields = true;
+            }
+        }
     }
     else if (selectedIndex == 1)
     {
@@ -290,6 +325,13 @@ void UI::DrawAddMenu()
         vecFigures.emplace_back(helix);
 
         UpdateFigureList();
+    }
+
+    if (isWrongFields) {
+        DrawTextEx(
+            ListFonts[currentFontName],
+            "All fields must be filled in\nand only with numbers",
+            { btnRect.x - 60, btnRect.y - 40 }, 16, 0, BLACK);
     }
     
 
