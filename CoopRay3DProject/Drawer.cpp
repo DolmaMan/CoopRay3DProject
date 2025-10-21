@@ -1,23 +1,29 @@
 #include "drawer.h"
-#include <raylib.h>
 
 void Drawer::DrawScene(const Camera3DController& cameraController) {
     BeginMode3D(cameraController.camera);
 
     DrawGrid(20, 1.0f);
 
-    DrawLine3D({ 0, 0, 0 }, { 5, 0, 0 }, RED);    
-    DrawLine3D({ 0, 0, 0 }, { 0, 5, 0 }, GREEN);  
-    DrawLine3D({ 0, 0, 0 }, { 0, 0, 5 }, BLUE);   
+    DrawLine3D({ 0, 0, 0 }, { 15, 0, 0 }, RED);    
+    DrawLine3D({ 0, 0, 0 }, { 0, 15, 0 }, GREEN);  
+    DrawLine3D({ 0, 0, 0 }, { 0, 0, 15 }, BLUE);   
 
-    DrawCube({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
-    DrawCubeWires({ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, MAROON);
-
-    DrawSphere({ 3.0f, 0.0f, 0.0f }, 1.0f, GREEN);
-    DrawSphereWires({ 3.0f, 0.0f, 0.0f }, 1.0f, 16, 16, DARKGREEN);
-
-    DrawCube({ 0.0f, 3.0f, 0.0f }, 1.0f, 1.0f, 1.0f, PURPLE);
-    DrawSphere({ 3.0f, 3.0f, 0.0f }, 0.8f, ORANGE);
+    for (auto fig : vecFigures) {
+        std::visit([](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, Circle*>) {
+                Circle::DrawCircle(arg);
+            }
+            else if constexpr (std::is_same_v<T, Ellipse*>) {
+                Ellipse::DrawEllipse(arg);
+            }
+            else if constexpr (std::is_same_v<T, Helix*>) {
+                Helix::DrawHelix(arg);
+            }
+            }, fig);
+    }
+    
 
     EndMode3D();
 }

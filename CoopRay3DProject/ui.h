@@ -11,5 +11,21 @@ namespace UI {
     void DrawAddMenu();
     void DrawEditMenu();
     void DrawDeleteMenu();
+    
+    void UpdateFigureList();
+    void UpdateFigureList(Rectangle excludingRect);
+    void DrawFigureList();
+
+    bool isElementHighlighted();
+    
+    struct GuiTextBoxControl {
+        char* str;
+        Rectangle rect;
+        bool editMode;
+
+        GuiTextBoxControl(Rectangle r);
+
+        void DrawControl();
+    };
 }
 

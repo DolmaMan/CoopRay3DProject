@@ -1,13 +1,21 @@
 #pragma once
-#include <raylib.h>
+#include<raylib.h>
+#include<vector>
 #include<string>
-#include<map>
+#include<variant>
+#include<unordered_map>
 
 struct Camera3DController;
 
+extern int screenWidth;
+extern int screenHeight;
+
 extern Rectangle screenTextureRect;
 
-extern std::map<std::string, Sound> ListSounds;
+extern Rectangle bigRect;
+extern Rectangle listFiguresRect;
+
+extern std::unordered_map<std::string, Sound> ListSounds;
 
 extern bool exitWindow;
 
