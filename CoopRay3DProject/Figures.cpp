@@ -1,46 +1,32 @@
 ﻿#include "Figures.h"
 
-//Figure::Figure(std::string fn, std::unordered_map<std::string, float> p)
-//{
-//	//Properties = p;
-// //   figureName = fn;
-// //   Properties["id"] = CountObjects++;
-// //   color = RED;
-// //   mapFigures.insert({ figureName, this });
-// //   //mapFigures[figureName].push_back(this);
-//}
-//
-//Figure::Figure(std::string fn, std::unordered_map<std::string, float> p, Color color)
-//{
-//    //Properties = p;
-//    //figureName = fn;
-//    //Properties["id"] = CountObjects++;
-//    //this->color = color;
-//    //mapFigures.insert({ figureName, this });
-//    ////mapFigures.push_back(this);
-//}
-//
-//Figure::~Figure()
-//{
-//    /*CountObjects--;
-//    auto it = mapFigures.begin();
-//    for (; it != mapFigures.end(); it++) {
-//        if ((*it).second->Properties["id"] == this->Properties["id"]) {
-//            mapFigures.erase(it);
-//            break;
-//        }
-//    }
-//    ChangeAllId(it);*/
-//}
-//
-//bool Figure::operator==( Figure* f1)
-//{
-//    //return (*this).Properties.at("id") == (*f1).Properties.at("id");
-//}
-
 Color GetRandomColor()
 {
-    int R = GetRandomValue(0, 255);
+    static std::vector<Color> vecColors
+    {
+        DARKGRAY,
+        //YELLOW,
+        //GOLD,
+        ORANGE,
+        PINK,
+        MAROON,
+        GREEN,
+        LIME,
+        DARKGREEN,
+        SKYBLUE,
+        BLUE,
+        DARKBLUE,
+        PURPLE,
+        VIOLET,
+        DARKPURPLE,
+        BEIGE,
+        BROWN,
+        DARKBROWN,
+        BLACK
+    };
+    return vecColors[GetRandomValue(0, vecColors.size() - 1)];
+
+    /*int R = GetRandomValue(0, 255);
     int G = GetRandomValue(0, 255);
     int B = GetRandomValue(0, 255);
     double delta, min;
@@ -56,7 +42,7 @@ Color GetRandomColor()
         h *= 60;
         if (h < 0.0) h = h + 360;
     }
-    return ColorFromHSV(h, s, (v / 255));
+    return ColorFromHSV(h, s, (v / 255));*/
 }
 
 Circle::Circle(CircleParams p)
@@ -78,92 +64,6 @@ Circle::~Circle()
 
 void Circle::DrawCircle(Circle* circle, int segments)
 {
-    //// Создаем точки на окружности
-    //Vector3 rotationAxis = (*circle).Properties.rotationAxis;
-
-    //float length = sqrtf(
-    //    rotationAxis.x * rotationAxis.x +
-    //    rotationAxis.y * rotationAxis.y +
-    //    rotationAxis.z * rotationAxis.z
-    //);
-    //if (length == 0.0f) {
-    //    rotationAxis = { 0.0f, 1.0f, 0.0f }; // По умолчанию вертикальная плоскость
-    //}
-    //else {
-    //    rotationAxis.x /= length;
-    //    rotationAxis.y /= length;
-    //    rotationAxis.z /= length;
-    //}
-
-    //// Находим два перпендикулярных вектора в плоскости окружности
-    //Vector3 u, v;
-
-    //// Выбираем вектор, не параллельный нормали
-    //if (fabsf(rotationAxis.x) < fabsf(rotationAxis.y) &&
-    //    fabsf(rotationAxis.x) < fabsf(rotationAxis.z)) {
-    //    u = { 1.0f, 0.0f, 0.0f };
-    //}
-    //else if (fabsf(rotationAxis.y) < fabsf(rotationAxis.z)) {
-    //    u = { 0.0f, 1.0f, 0.0f };
-    //}
-    //else {
-    //    u = { 0.0f, 0.0f, 1.0f };
-    //}
-
-    //// Вектор u перпендикулярен нормали
-    //u = {
-    //    u.x - rotationAxis.x * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z),
-    //    u.y - rotationAxis.y * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z),
-    //    u.z - rotationAxis.z * (u.x * rotationAxis.x + u.y * rotationAxis.y + u.z * rotationAxis.z)
-    //};
-
-    //// Нормализуем u
-    //float uLength = sqrtf(u.x * u.x + u.y * u.y + u.z * u.z);
-    //if (uLength > 0.0f) {
-    //    u.x /= uLength;
-    //    u.y /= uLength;
-    //    u.z /= uLength;
-    //}
-
-    //// Вектор v = normal × u (векторное произведение)
-    //v = {
-    //    rotationAxis.y * u.z - rotationAxis.z * u.y,
-    //    rotationAxis.z * u.x - rotationAxis.x * u.z,
-    //    rotationAxis.x * u.y - rotationAxis.y * u.x
-    //};
-
-    //// Создаем и рисуем окружность
-    //Vector3 prevPoint;
-    //bool firstPoint = true;
-
-    //for (int i = 0; i <= segments; i++) {
-    //    float angle = (float)i / (float)segments * 2.0f * PI;
-    //    float cosAngle = cosf(angle);
-    //    float sinAngle = sinf(angle);
-
-    //    // Точка в плоскости окружности
-    //    Vector3 pointInPlane = {
-    //        cosAngle * (*circle).Properties.radius,
-    //        sinAngle * (*circle).Properties.radius,
-    //        0.0f
-    //    };
-
-    //    // Преобразуем в мировые координаты
-    //    Vector3 worldPoint = {
-    //        (*circle).Properties.center.x + pointInPlane.x * u.x + pointInPlane.y * v.x,
-    //        (*circle).Properties.center.y + pointInPlane.x * u.y + pointInPlane.y * v.y,
-    //        (*circle).Properties.center.z + pointInPlane.x * u.z + pointInPlane.y * v.z
-    //    };
-
-    //    // Рисуем линию от предыдущей точки к текущей
-    //    if (!firstPoint) {
-    //        DrawLine3D(prevPoint, worldPoint, (*circle).Properties.color);
-    //    }
-
-    //    prevPoint = worldPoint;
-    //    firstPoint = false;
-    //}
-    // Конвертируем градусы в радианы
     Vector3 tiltAngles = (*circle).Properties.tiltAngles;
 
     float tiltXRad = tiltAngles.x * DEG2RAD;
@@ -216,7 +116,10 @@ void Circle::DrawCircle(Circle* circle, int segments)
 
         // Рисуем линию от предыдущей точки к текущей
         if (!firstPoint) {
-            DrawLine3D(prevPoint, currentPoint, (*circle).Properties.color);
+            if(!(*circle).Properties.isHighlightedInMenu)
+                DrawLine3D(prevPoint, currentPoint, (*circle).Properties.color);
+            else
+                DrawLine3D(prevPoint, currentPoint, RED);
         }
 
         prevPoint = currentPoint;
@@ -226,55 +129,6 @@ void Circle::DrawCircle(Circle* circle, int segments)
 
 void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
 {
-    //for (int i = 0; i <= segments; i++) {
-    //    float theta = (float)i / (float)segments * PI; // от 0 до PI
-
-    //    Vector3 prevPoint;
-    //    bool firstPoint = true;
-
-    //    for (int j = 0; j <= segments; j++) {
-    //        float phi = (float)j / (float)segments * 2.0f * PI; // от 0 до 2*PI
-
-    //        // Параметрическое уравнение эллипсоида
-    //        Vector3 point = {
-    //            (*ellipse).Properties.center.x + (*ellipse).Properties.radius.x * sinf(theta) * cosf(phi),
-    //            (*ellipse).Properties.center.y + (*ellipse).Properties.radius.y * sinf(theta) * sinf(phi),
-    //            (*ellipse).Properties.center.z + (*ellipse).Properties.radius.z * cosf(theta)
-    //        };
-
-    //        if (!firstPoint) {
-    //            DrawLine3D(prevPoint, point, (*ellipse).Properties.color);
-    //        }
-
-    //        prevPoint = point;
-    //        firstPoint = false;
-    //    }
-    //}
-
-    //// Рисуем вертикальные меридианы
-    //for (int j = 0; j <= segments; j++) {
-    //    float phi = (float)j / (float)segments * 2.0f * PI;
-
-    //    Vector3 prevPoint;
-    //    bool firstPoint = true;
-
-    //    for (int i = 0; i <= segments; i++) {
-    //        float theta = (float)i / (float)segments * PI;
-
-    //        Vector3 point = {
-    //            (*ellipse).Properties.center.x + (*ellipse).Properties.radius.x * sinf(theta) * cosf(phi),
-    //            (*ellipse).Properties.center.y + (*ellipse).Properties.radius.y * sinf(theta) * sinf(phi),
-    //            (*ellipse).Properties.center.z + (*ellipse).Properties.radius.z * cosf(theta)
-    //        };
-
-    //        if (!firstPoint) {
-    //            DrawLine3D(prevPoint, point, (*ellipse).Properties.color);
-    //        }
-
-    //        prevPoint = point;
-    //        firstPoint = false;
-    //    }
-    //}
     float rx = (*ellipse).Properties.tiltAngles.x * DEG2RAD;
     float ry = (*ellipse).Properties.tiltAngles.y * DEG2RAD;
     float rz = (*ellipse).Properties.tiltAngles.z * DEG2RAD;
@@ -316,7 +170,10 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         Vector3 point = rotatePoint(0, (*ellipse).Properties.radius.y * cosf(angle), (*ellipse).Properties.radius.z * sinf(angle));
 
         if (!firstPointX) {
-            DrawLine3D(prevPointX, point, (*ellipse).Properties.color);
+            if((*ellipse).Properties.isHighlightedInMenu)
+                DrawLine3D(prevPointX, point, (*ellipse).Properties.color);
+            else
+                DrawLine3D(prevPointX, point, RED);
         }
         prevPointX = point;
         firstPointX = false;
@@ -330,7 +187,10 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         Vector3 point = rotatePoint((*ellipse).Properties.radius.x * cosf(angle), 0, (*ellipse).Properties.radius.z * sinf(angle));
 
         if (!firstPointY) {
-            DrawLine3D(prevPointY, point, (*ellipse).Properties.color);
+            if ((*ellipse).Properties.isHighlightedInMenu)
+                DrawLine3D(prevPointY, point, (*ellipse).Properties.color);
+            else
+                DrawLine3D(prevPointY, point, RED);
         }
         prevPointY = point;
         firstPointY = false;
@@ -344,7 +204,10 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         Vector3 point = rotatePoint((*ellipse).Properties.radius.x * cosf(angle), (*ellipse).Properties.radius.y * sinf(angle), 0);
 
         if (!firstPointZ) {
-            DrawLine3D(prevPointZ, point, (*ellipse).Properties.color);
+            if (!(*ellipse).Properties.isHighlightedInMenu)
+                DrawLine3D(prevPointZ, point, (*ellipse).Properties.color);
+            else
+                DrawLine3D(prevPointZ, point, RED);
         }
         prevPointZ = point;
         firstPointZ = false;
@@ -407,7 +270,10 @@ void Helix::DrawHelix(Helix* helix)
         };
 
         if (!firstPoint) {
-            DrawLine3D(prevPoint, point, (*helix).Properties.color);
+            if(!(*helix).Properties.isHighlightedInMenu)
+                DrawLine3D(prevPoint, point, (*helix).Properties.color);
+            else
+                DrawLine3D(prevPoint, point, RED);
         }
 
         prevPoint = point;
