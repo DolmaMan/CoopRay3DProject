@@ -12,11 +12,6 @@ private:
 	static inline unsigned CountObjects{};
 
 public:
-	/*std::unordered_map<std::string, float> Properties;
-	std::string figureName;
-	Color color;
-	Rectangle figureRect;
-	bool isHighlighted;*/
 	struct FigureParams
 	{
 		Color color;
@@ -27,13 +22,6 @@ public:
 	FigureParams baseParams;
 
 	Figure(){}
-	/*Figure(Color c, Rectangle r, bool isH) : baseParams{c, r, isH}{}
-
-	Figure(std::string, std::unordered_map<std::string, float> p);
-	Figure(std::string, std::unordered_map<std::string, float> p, Color color);
-	~Figure();
-
-	bool operator==(Figure* f1);*/
 
 	virtual std::string getClassName() const = 0;
 };

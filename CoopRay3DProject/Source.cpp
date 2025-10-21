@@ -29,10 +29,13 @@ RenderTexture addMenuTexture;
 
 MenusEnum currentEnum;
 
+std::unordered_map<std::string, Font> ListFonts;
+std::string currentFontName;
+
 std::vector<figure_variant> vecFigures;
 
 void LoadSounds() {
-    std::string folder_path = "..\\assets\\audio"; // Путь к папке (в данном случае, текущая папка)
+    std::string folder_path = "..\\assets\\audio";
 
     try {
         // Создаем итератор для папки
@@ -48,6 +51,12 @@ void LoadSounds() {
     catch (const std::filesystem::filesystem_error& e) {
         std::cerr << "Ошибка файловой системы: " << e.what() << std::endl;
     }
+}
+
+void LoadFonts() {
+    ListFonts["Consolas"] = LoadFont("..\\assets\\fonts\\consolab.ttf");
+    ListFonts["Braille"] = LoadFont("..\\assets\\fonts\\braille.ttf");
+    currentFontName = "Consolas";
 }
 
 int main() 
@@ -68,6 +77,11 @@ int main()
     
     InitAudioDevice();
     LoadSounds();
+    LoadFonts();
+
+    GuiSetFont(ListFonts[currentFontName]);
+
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 14);
 
     while (!exitWindow) {
         switch (currentEnum) {

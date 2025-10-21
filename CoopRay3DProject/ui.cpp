@@ -8,7 +8,7 @@ void UI::DrawMainMenu() {
         !addMenuRequested &&
         !editMenuRequested &&
         !deleteMenuRequested
-        ) 
+        )
     {
         cameraController.HandleInput();
         cameraController.Update();
@@ -25,22 +25,35 @@ void UI::DrawMainMenu() {
 
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 255);
 
-    DrawText("WASD: Move camera", 10, 60, 16, DARKGRAY);
-    DrawText("Right mouse button or TAB: Free camera mode", 10, 80, 16, DARKGRAY);
-    DrawText("R: Reset camera", 10, 100, 16, DARKGRAY);
-    DrawText("ESC: Exit", 10, 120, 16, DARKGRAY);
-
-    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape")) { addMenuRequested = true; };
+    DrawTextEx(ListFonts[currentFontName], "WASD: Move camera", { 10, 60 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "Right mouse button or TAB: Free camera mode", { 10, 80 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "R: Reset camera", { 10, 100 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "ESC: Exit", { 10, 120 }, 16, 1, DARKGRAY);
+    
+    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape")) { addMenuRequested = true; }
     if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape")) 
     {
         if(isElementHighlighted())
             deleteMenuRequested = true; 
-    };
+    }
     if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape")) 
     { 
         if (isElementHighlighted())
             editMenuRequested = true; 
-    };
+    }
+
+    if (GuiButton({ (float)screenWidth - 140, 10, 120, 30 }, "Change Font"))
+    {
+        if (currentFontName == "Consolas") {
+            GuiSetFont(ListFonts["Braille"]);
+
+            currentFontName = "Braille";
+        }
+        else {
+            GuiSetFont(ListFonts["Consolas"]);
+            currentFontName = "Consolas";
+        }
+    }
 
     if (addMenuRequested) { DrawAddMenu(); }
     else if (editMenuRequested) { DrawEditMenu(); }
@@ -49,11 +62,11 @@ void UI::DrawMainMenu() {
     DrawRectangleLinesEx(bigRect, 1, DARKGRAY);
     DrawRectangleLinesEx(listFiguresRect, 1, DARKGRAY);
 
-    DrawText("SHAPES LIST", screenWidth - 290, 65, 20, BLACK);
+    DrawTextEx(ListFonts[currentFontName], "SHAPES LIST", { (float)screenWidth - 290, 65 }, 20, 1, BLACK);
 
-    DrawText("ID", screenWidth - 290, 110, 16, DARKGRAY);
-    DrawText("Type", screenWidth - 250, 110, 16, DARKGRAY);
-    DrawText("Position", screenWidth - 190, 110, 16, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "ID", { (float)screenWidth - 290, 110 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "Type", { (float)screenWidth - 250, 110 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], "Position", { (float)screenWidth - 190, 110 }, 16, 1, DARKGRAY);
     
     DrawLine(screenWidth - 300 + 1, 50, screenWidth - 300, 135, DARKGRAY);
     DrawLine(screenWidth - 300 + 1, 95, screenWidth, 95, DARKGRAY);
@@ -79,7 +92,7 @@ void UI::DrawExitMenu() {
     // ÑÄÅËÀÒÜ ÌÅÍÞ ÂÛÕÎÄÀ
     Color BgCol = { 0, 0, 0, 200 };
     DrawRectangle(0, 200, screenWidth, 200, BgCol);
-    DrawText("Are you sure you want to exit program? [Y/N]", 40, 270, 30, WHITE);
+    DrawTextEx(ListFonts[currentFontName], "Are you sure you want to exit program? [Y/N]", { 40, 270 }, 30, 1, WHITE);
 
     EndDrawing();
 
@@ -235,17 +248,25 @@ void UI::DrawFigureList()
                         DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 1, BLACK);
                     }
 
-                    DrawText(
+                    DrawTextEx(
+                        ListFonts[currentFontName],
                         std::to_string(index++).c_str(),
-                        (*arg).Properties.figureInMenuRect.x + 10,
-                        (*arg).Properties.figureInMenuRect.y + 10,
-                        16, BLACK
+                        {
+                            (*arg).Properties.figureInMenuRect.x + 10,
+                            (*arg).Properties.figureInMenuRect.y + 10
+                        },
+                        16, 1,
+                        BLACK
                     );
-                    DrawText(
+                    DrawTextEx(
+                        ListFonts[currentFontName],
                         (*arg).getClassName().c_str(),
-                        (*arg).Properties.figureInMenuRect.x + 50,
-                        (*arg).Properties.figureInMenuRect.y + 10,
-                        16, BLACK
+                        {
+                            (*arg).Properties.figureInMenuRect.x + 50,
+                            (*arg).Properties.figureInMenuRect.y + 10
+                        }, 
+                        16, 1,
+                        BLACK
                     );
                 },
                 fig
@@ -261,17 +282,25 @@ void UI::DrawFigureList()
                     else
                         DrawRectangleLinesEx((*arg).Properties.figureInMenuRect, 1, BLACK);
 
-                    DrawText(
+                    DrawTextEx(
+                        ListFonts[currentFontName],
                         std::to_string(index++).c_str(),
-                        (*arg).Properties.figureInMenuRect.x + 10,
-                        (*arg).Properties.figureInMenuRect.y + 10,
-                        16, BLACK
+                        {
+                            (*arg).Properties.figureInMenuRect.x + 10,
+                            (*arg).Properties.figureInMenuRect.y + 10
+                        },
+                        16, 1,
+                        BLACK
                     );
-                    DrawText(
+                    DrawTextEx(
+                        ListFonts[currentFontName],
                         (*arg).getClassName().c_str(),
-                        (*arg).Properties.figureInMenuRect.x + 50,
-                        (*arg).Properties.figureInMenuRect.y + 10,
-                        16, BLACK
+                        {
+                            (*arg).Properties.figureInMenuRect.x + 50,
+                            (*arg).Properties.figureInMenuRect.y + 10
+                        },
+                        16, 1,
+                        BLACK
                     );
                 },
                 fig
