@@ -17,5 +17,15 @@ namespace UI {
     void DrawFigureList();
 
     bool isElementHighlighted();
+    
+    struct GuiTextBoxControl {
+        char* str;
+        Rectangle rect;
+        bool editMode;
+
+        GuiTextBoxControl(Rectangle r);
+
+        void DrawControl();
+    };
 }
 

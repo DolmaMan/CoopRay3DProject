@@ -107,18 +107,150 @@ void UI::DrawAddMenu()
     DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
     DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
 
-    static Rectangle rect = { menuRect.x, menuRect.y, 100, 10 };
-    static char* str = new char[100] {'\0'};
-    if (GuiTextBox(rect, str, 100, true)) {
+    
 
-    };
-    static const char* str2 = "Circle;Ellipse;Helix";
+    static Rectangle centerRectX = { menuRect.x + 40, menuRect.y + 65, 30, 20};
+    static Rectangle centerRectY = { menuRect.x + 110, menuRect.y + 65, 30, 20 };
+    static Rectangle centerRectZ = { menuRect.x + 180, menuRect.y + 65, 30, 20 };
+
+    static Rectangle angleRectX = { menuRect.x + 40, menuRect.y + 115, 30, 20 };
+    static Rectangle angleRectY = { menuRect.x + 110, menuRect.y + 115, 30, 20 };
+    static Rectangle angleRectZ = { menuRect.x + 180, menuRect.y + 115, 30, 20 };
+
+    static Rectangle radRect = { menuRect.x + 40, menuRect.y + 165, 170, 20 };
+
+    static GuiTextBoxControl centerX = GuiTextBoxControl(centerRectX);
+    static GuiTextBoxControl centerY = GuiTextBoxControl(centerRectY);
+    static GuiTextBoxControl centerZ = GuiTextBoxControl(centerRectZ);
+    static GuiTextBoxControl angleX = GuiTextBoxControl(angleRectX);
+    static GuiTextBoxControl angleY = GuiTextBoxControl(angleRectY);
+    static GuiTextBoxControl angleZ = GuiTextBoxControl(angleRectZ);
+    static GuiTextBoxControl rad = GuiTextBoxControl(radRect);
+
+    static Rectangle btnRect = { menuRect.x + 160, menuRect.y + 350, 100, 30 };
+
+    static const char* figStr = "Circle;Ellipse;Helix";
     static int selectedIndex = 0;
     static bool editMode = false;
-    static Rectangle topRect = { menuRect.x, menuRect.y + 25, 400, 25 };
-    if (GuiDropdownBox({menuRect.x + 100, menuRect.y + 100, 100, 20 }, str2, &selectedIndex, editMode)) {
-        editMode = !editMode;
+    if (GuiDropdownBox({ menuRect.x + 250, menuRect.y + 65, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
+    if (selectedIndex == 0)
+    {
+        centerX.DrawControl();
+        centerY.DrawControl();
+        centerZ.DrawControl();
+        angleX.DrawControl();
+        angleY.DrawControl();
+        angleZ.DrawControl();
+        rad.DrawControl();
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+
+        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
+        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+
+        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
+        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius:");
+
+        if (GuiButton(btnRect, "Add")){}
     }
+    else if (selectedIndex == 1)
+    {
+        static Rectangle radElRectX = { menuRect.x + 40, menuRect.y + 165, 30, 20 };
+        static Rectangle radElRectY = { menuRect.x + 110, menuRect.y + 165, 30, 20 };
+        static Rectangle radElRectZ = { menuRect.x + 180, menuRect.y + 165, 30, 20 };
+        static GuiTextBoxControl radElX = GuiTextBoxControl(radElRectX);
+        static GuiTextBoxControl radElY = GuiTextBoxControl(radElRectY);
+        static GuiTextBoxControl radElZ = GuiTextBoxControl(radElRectZ);
+
+        centerX.DrawControl();
+        centerY.DrawControl();
+        centerZ.DrawControl();
+        angleX.DrawControl();
+        angleY.DrawControl();
+        angleZ.DrawControl();
+        radElX.DrawControl();
+        radElY.DrawControl();
+        radElZ.DrawControl();
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+
+        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
+        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+
+        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
+        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius XYZ:");
+
+        GuiLabel({ radElRectX.x - 20, radElRectX.y, 20, 20 }, "X:");
+        GuiLabel({ radElRectY.x - 20, radElRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ radElRectZ.x - 20, radElRectX.y, 20, 20 }, "Z:");
+        
+    }
+    else if (selectedIndex == 2)
+    {
+        static Rectangle heightRect = { menuRect.x + 40, menuRect.y + 215, 170, 20 };
+        static Rectangle stepRect = { menuRect.x + 40, menuRect.y + 265, 170, 20 };
+
+        static GuiTextBoxControl height = GuiTextBoxControl(heightRect);
+        static GuiTextBoxControl step = GuiTextBoxControl(stepRect);
+
+        centerX.DrawControl();
+        centerY.DrawControl();
+        centerZ.DrawControl();
+        angleX.DrawControl();
+        angleY.DrawControl();
+        angleZ.DrawControl();
+        rad.DrawControl();
+        height.DrawControl();
+        step.DrawControl();
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+
+        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
+        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+
+        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
+        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
+        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
+
+        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 190, 80, 15 }, "Height:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 240, 80, 15 }, "Step:");
+    }
+    
+
+    
+    static float centX = 5;
+    static float centY = 0;
+    static float centZ = 0;
+
+    static float radiusC = 2;
+
+    static float circleStepHelix = 2;
+    static float heightHelix = 10;
+
+    //Угол наклона принимать в градусах
+    static float tiltAngleX = 90;
+    static float tiltAngleY = 0;
+    static float tiltAngleZ = 0;
+
+    static float radiusElX = 8;
+    static float radiusElY = 2;
+    static float radiusElZ = 4;
 
     
     static float centerX = 5;
@@ -165,7 +297,7 @@ void UI::DrawAddMenu()
 
         //Пример создания хеликса
         Helix::HelixParams params;
-        params.center = { centerX, centerY, centerZ };
+        params.center = { centX, centY, centZ };
         params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
         params.color = GetRandomColor();
         params.radius = radiusC;
@@ -318,4 +450,18 @@ bool UI::isElementHighlighted()
         );
     }
     return false;
+}
+
+UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r)
+{
+    rect = r;
+    editMode = false;
+    str = new char[100] {'\0'};
+}
+
+void UI::GuiTextBoxControl::DrawControl()
+{
+    if (GuiTextBox(rect, str, 100, editMode)) {
+        editMode = !editMode;
+    }
 }

@@ -38,18 +38,18 @@ void LoadSounds() {
     std::string folder_path = "..\\assets\\audio";
 
     try {
-        // Создаем итератор для папки
+        // Г‘Г®Г§Г¤Г ГҐГ¬ ГЁГІГҐГ°Г ГІГ®Г° Г¤Г«Гї ГЇГ ГЇГЄГЁ
         for (const auto& entry : std::filesystem::directory_iterator(folder_path)) {
-            // Получаем информацию о текущем элементе
-            std::string file_path = entry.path().string(); // Полный путь к файлу/папке
+            // ГЏГ®Г«ГіГ·Г ГҐГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГІГҐГЄГіГ№ГҐГ¬ ГЅГ«ГҐГ¬ГҐГ­ГІГҐ
+            std::string file_path = entry.path().string(); // ГЏГ®Г«Г­Г»Г© ГЇГіГІГј ГЄ ГґГ Г©Г«Гі/ГЇГ ГЇГЄГҐ
 
-            if (entry.is_regular_file()) { // Если это обычный файл
+            if (entry.is_regular_file()) { // Г…Г±Г«ГЁ ГЅГІГ® Г®ГЎГ»Г·Г­Г»Г© ГґГ Г©Г«
                 ListSounds[entry.path().filename().string()] = LoadSound(entry.path().string().c_str());
             }
         }
     }
     catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Ошибка файловой системы: " << e.what() << std::endl;
+        std::cerr << "ГЋГёГЁГЎГЄГ  ГґГ Г©Г«Г®ГўГ®Г© Г±ГЁГ±ГІГҐГ¬Г»: " << e.what() << std::endl;
     }
 }
 
