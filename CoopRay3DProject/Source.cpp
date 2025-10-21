@@ -49,13 +49,13 @@ void LoadSounds() {
         }
     }
     catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Îøèáêà ôàéëîâîé ñèñòåìû: " << e.what() << std::endl;
+        std::cerr << "Filesystem error: " << e.what() << std::endl;
     }
 }
 
 void LoadFonts() {
     ListFonts["Consolas"] = LoadFont("..\\assets\\fonts\\consolab.ttf");
-    ListFonts["Braille"] = LoadFont("..\\assets\\fonts\\braille.ttf");
+    ListFonts["Minecraft"] = LoadFont("..\\assets\\fonts\\minecraft.ttf");
     currentFontName = "Consolas";
 }
 

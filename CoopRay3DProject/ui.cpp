@@ -45,9 +45,9 @@ void UI::DrawMainMenu() {
     if (GuiButton({ (float)screenWidth - 140, 10, 120, 30 }, "Change Font"))
     {
         if (currentFontName == "Consolas") {
-            GuiSetFont(ListFonts["Braille"]);
+            GuiSetFont(ListFonts["Minecraft"]);
 
-            currentFontName = "Braille";
+            currentFontName = "Minecraft";
         }
         else {
             GuiSetFont(ListFonts["Consolas"]);
@@ -143,19 +143,19 @@ void UI::DrawAddMenu()
         angleZ.DrawControl();
         rad.DrawControl();
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
 
         GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
         GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
         GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
 
         GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
         GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
         GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius:");
 
         if (GuiButton(btnRect, "Add")){}
     }
@@ -178,19 +178,19 @@ void UI::DrawAddMenu()
         radElY.DrawControl();
         radElZ.DrawControl();
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
 
         GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
         GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
         GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
 
         GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
         GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
         GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius XYZ:");
 
         GuiLabel({ radElRectX.x - 20, radElRectX.y, 20, 20 }, "X:");
         GuiLabel({ radElRectY.x - 20, radElRectX.y, 20, 20 }, "Y:");
@@ -215,13 +215,13 @@ void UI::DrawAddMenu()
         height.DrawControl();
         step.DrawControl();
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 80, 15 }, "Center XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
 
         GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
         GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
         GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 80, 15 }, "Angle XYZ:");
+        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
 
         GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
         GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
@@ -252,24 +252,6 @@ void UI::DrawAddMenu()
     static float radiusElY = 2;
     static float radiusElZ = 4;
 
-    
-    static float centerX = 5;
-    static float centerY = 0;
-    static float centerZ = 0;
-
-    static float radiusC = 2;
-
-    static float circleStepHelix = 2;
-    static float heightHelix = 10;
-
-    //Угол наклона принимать в градусах
-    static float tiltAngleX = 90;
-    static float tiltAngleY = 0;
-    static float tiltAngleZ = 0;
-
-    static float radiusElX = 8;
-    static float radiusElY = 2;
-    static float radiusElZ = 4;
 
     if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
     {
