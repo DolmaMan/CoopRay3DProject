@@ -231,6 +231,51 @@ void UI::DrawAddMenu()
         GuiLabel({ radElRectY.x - 20, radElRectX.y, 20, 20 }, "Y:");
         GuiLabel({ radElRectZ.x - 20, radElRectX.y, 20, 20 }, "Z:");
         
+        if (GuiButton(btnRect, "Add"))
+        {
+            try {
+                Ellipse::EllipseParams params;
+                params.center =
+                {
+                    strtof(centerX.str, NULL),
+                    strtof(centerY.str, NULL),
+                    strtof(centerZ.str, NULL)
+                };
+                params.tiltAngles =
+                {
+                    strtof(angleX.str, NULL),
+                    strtof(angleY.str, NULL),
+                    strtof(angleZ.str, NULL)
+                };
+                Vector3 radius =
+                {
+                    strtof(radElX.str, NULL),
+                    strtof(radElY.str, NULL),
+                    strtof(radElZ.str, NULL)
+                };
+                if (
+                    radius.x == 0 ||
+                    radius.y == 0 ||
+                    radius.z == 0
+                    )
+                    throw "";
+                else
+                    params.radius = radius;
+                params.color = GetRandomColor();
+
+                Ellipse* ellipse = new Ellipse(params);
+                vecFigures.emplace_back(ellipse);
+
+                UpdateFigureList();
+
+                addMenuRequested = false;
+
+            }
+            catch (...)
+            {
+                isWrongFields = true;
+            }
+        }
     }
     else if (selectedIndex == 2)
     {
@@ -265,66 +310,52 @@ void UI::DrawAddMenu()
         GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius:");
         GuiLabel({ menuRect.x + 20, menuRect.y + 190, 80, 15 }, "Height:");
         GuiLabel({ menuRect.x + 20, menuRect.y + 240, 80, 15 }, "Step:");
+        
+        if (GuiButton(btnRect, "Add"))
+        {
+            try {
+                Helix::HelixParams params;
+                params.center =
+                {
+                    strtof(centerX.str, NULL),
+                    strtof(centerY.str, NULL),
+                    strtof(centerZ.str, NULL)
+                };
+                params.tiltAngles =
+                {
+                    strtof(angleX.str, NULL),
+                    strtof(angleY.str, NULL),
+                    strtof(angleZ.str, NULL),
+                };
+                float radius = strtof(rad.str, NULL);
+                params.radius = (radius==0)?throw"":radius;
+
+                float h = strtof(height.str, NULL);
+                params.height = (h == 0)?throw"":h;
+
+                float s = strtof(step.str, NULL);
+                params.circleStep = (s == 0)?throw"":s;
+
+                params.color = GetRandomColor();
+
+                Helix* helix = new Helix(params);
+                vecFigures.emplace_back(helix);
+
+                UpdateFigureList();
+
+                addMenuRequested = false;
+
+            }
+            catch (...)
+            {
+                isWrongFields = true;
+            }
+        }
     }
-    
-
-    
-    static float centX = 5;
-    static float centY = 0;
-    static float centZ = 0;
-
-    static float radiusC = 2;
-
-    static float circleStepHelix = 2;
-    static float heightHelix = 10;
-
-    //Угол наклона принимать в градусах
-    static float tiltAngleX = 90;
-    static float tiltAngleY = 0;
-    static float tiltAngleZ = 0;
-
-    static float radiusElX = 8;
-    static float radiusElY = 2;
-    static float radiusElZ = 4;
-
 
     if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
     {
         addMenuRequested = false;
-
-        //Пример создания диска
-        /*Circle::CircleParams params;
-        params.center = { centerX, centerY, centerZ };
-        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
-        params.color = GetRandomColor();
-        params.radius = radiusC;
-
-        Circle* circle = new Circle(params);
-        vecFigures.emplace_back(circle);*/
-
-        //Пример создания эллипса
-        /*Ellipse::EllipseParams params;
-        params.center = { centerX, centerY, centerZ };
-        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
-        params.color = GetRandomColor();
-        params.radius = { radiusElX, radiusElY, radiusElZ };
-
-        Ellipse* ellipse = new Ellipse(params);
-        vecFigures.emplace_back(ellipse);*/
-
-        //Пример создания хеликса
-        Helix::HelixParams params;
-        params.center = { centX, centY, centZ };
-        params.tiltAngles = { tiltAngleX , tiltAngleY , tiltAngleZ };
-        params.color = GetRandomColor();
-        params.radius = radiusC;
-        params.circleStep = circleStepHelix;
-        params.height = heightHelix;
-
-        Helix* helix = new Helix(params);
-        vecFigures.emplace_back(helix);
-
-        UpdateFigureList();
     }
 
     if (isWrongFields) {
