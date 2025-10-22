@@ -8,7 +8,22 @@
 namespace UI {
     void DrawMainMenu();
     void DrawExitMenu();
-    void DrawAddMenu();
+    void DrawAddMenu
+    (
+        int currentFigureInDropdownBox    = 0,
+        char* centerXT                    = new char[100] {'\0'},
+        char* centerYT                    = new char[100] {'\0'},
+        char* centerZT                    = new char[100] {'\0'},
+        char* angleXT                     = new char[100] {'\0'},
+        char* angleYT                     = new char[100] {'\0'},
+        char* angleZT                     = new char[100] {'\0'},
+        char* radT                        = new char[100] {'\0'},
+        char* radElXT                     = new char[100] {'\0'},
+        char* radElYT                     = new char[100] {'\0'},
+        char* radElZT                     = new char[100] {'\0'},
+        char* heightT                     = new char[100] {'\0'},
+        char* circleStepT                 = new char[100] {'\0'}
+    );
     void DrawEditMenu();
     void DrawDeleteMenu();
     
@@ -23,7 +38,7 @@ namespace UI {
         Rectangle rect;
         bool editMode;
 
-        GuiTextBoxControl(Rectangle r);
+        GuiTextBoxControl(Rectangle r, char* s);
 
         void DrawControl();
     };

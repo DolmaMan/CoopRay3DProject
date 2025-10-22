@@ -101,7 +101,22 @@ void UI::DrawExitMenu() {
 
 }
 
-void UI::DrawAddMenu() 
+void UI::DrawAddMenu
+    (
+        int currentFigureInDropdownBox,
+        char* centerXT,
+        char* centerYT,
+        char* centerZT,
+        char* angleXT,
+        char* angleYT,
+        char* angleZT,
+        char* radT,
+        char* radElXT,
+        char* radElYT,
+        char* radElZT,
+        char* heightT,
+        char* circleStepT
+    ) 
 {
     static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
     DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
@@ -119,18 +134,18 @@ void UI::DrawAddMenu()
 
     static Rectangle radRect = { menuRect.x + 40, menuRect.y + 165, 170, 20 };
 
-    static GuiTextBoxControl centerX = GuiTextBoxControl(centerRectX);
-    static GuiTextBoxControl centerY = GuiTextBoxControl(centerRectY);
-    static GuiTextBoxControl centerZ = GuiTextBoxControl(centerRectZ);
-    static GuiTextBoxControl angleX = GuiTextBoxControl(angleRectX);
-    static GuiTextBoxControl angleY = GuiTextBoxControl(angleRectY);
-    static GuiTextBoxControl angleZ = GuiTextBoxControl(angleRectZ);
-    static GuiTextBoxControl rad = GuiTextBoxControl(radRect);
+    static GuiTextBoxControl centerX = GuiTextBoxControl(centerRectX, centerXT);
+    static GuiTextBoxControl centerY = GuiTextBoxControl(centerRectY, centerYT);
+    static GuiTextBoxControl centerZ = GuiTextBoxControl(centerRectZ, centerZT);
+    static GuiTextBoxControl angleX = GuiTextBoxControl(angleRectX, angleXT);
+    static GuiTextBoxControl angleY = GuiTextBoxControl(angleRectY, angleYT);
+    static GuiTextBoxControl angleZ = GuiTextBoxControl(angleRectZ, angleZT);
+    static GuiTextBoxControl rad = GuiTextBoxControl(radRect, radT);
 
     static Rectangle btnRect = { menuRect.x + 160, menuRect.y + 350, 100, 30 };
 
     static const char* figStr = "Circle;Ellipse;Helix";
-    static int selectedIndex = 0;
+    static int selectedIndex = currentFigureInDropdownBox;
     static bool editMode = false;
     if (GuiDropdownBox({ menuRect.x + 250, menuRect.y + 65, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
     if (selectedIndex == 0)
@@ -157,9 +172,10 @@ void UI::DrawAddMenu()
 
         GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius:");
 
-        if (GuiButton(btnRect, "Add"))
+        if (GuiButton(btnRect, "OK"))
         {
-            try {
+            try 
+            {
                 Circle::CircleParams params;
                 params.center =
                 {
@@ -180,13 +196,18 @@ void UI::DrawAddMenu()
                     params.radius = radius;
                 params.color = GetRandomColor();
 
+                if (addMenuRequested)
+                    addMenuRequested = false;
+                else
+                {
+                    editMenuRequested = false;
+                    DrawDeleteMenu();
+                }
+
                 Circle* circle = new Circle(params);
                 vecFigures.emplace_back(circle);
 
                 UpdateFigureList();
-
-                addMenuRequested = false;
-                
             }
             catch(...) 
             {
@@ -199,9 +220,9 @@ void UI::DrawAddMenu()
         static Rectangle radElRectX = { menuRect.x + 40, menuRect.y + 165, 30, 20 };
         static Rectangle radElRectY = { menuRect.x + 110, menuRect.y + 165, 30, 20 };
         static Rectangle radElRectZ = { menuRect.x + 180, menuRect.y + 165, 30, 20 };
-        static GuiTextBoxControl radElX = GuiTextBoxControl(radElRectX);
-        static GuiTextBoxControl radElY = GuiTextBoxControl(radElRectY);
-        static GuiTextBoxControl radElZ = GuiTextBoxControl(radElRectZ);
+        static GuiTextBoxControl radElX = GuiTextBoxControl(radElRectX, radElXT);
+        static GuiTextBoxControl radElY = GuiTextBoxControl(radElRectY, radElYT);
+        static GuiTextBoxControl radElZ = GuiTextBoxControl(radElRectZ, radElZT);
 
         centerX.DrawControl();
         centerY.DrawControl();
@@ -231,7 +252,7 @@ void UI::DrawAddMenu()
         GuiLabel({ radElRectY.x - 20, radElRectX.y, 20, 20 }, "Y:");
         GuiLabel({ radElRectZ.x - 20, radElRectX.y, 20, 20 }, "Z:");
         
-        if (GuiButton(btnRect, "Add"))
+        if (GuiButton(btnRect, "OK"))
         {
             try {
                 Ellipse::EllipseParams params;
@@ -263,13 +284,18 @@ void UI::DrawAddMenu()
                     params.radius = radius;
                 params.color = GetRandomColor();
 
+                if (addMenuRequested)
+                    addMenuRequested = false;
+                else
+                {
+                    editMenuRequested = false;
+                    DrawDeleteMenu();
+                }
+
                 Ellipse* ellipse = new Ellipse(params);
                 vecFigures.emplace_back(ellipse);
 
                 UpdateFigureList();
-
-                addMenuRequested = false;
-
             }
             catch (...)
             {
@@ -282,8 +308,8 @@ void UI::DrawAddMenu()
         static Rectangle heightRect = { menuRect.x + 40, menuRect.y + 215, 170, 20 };
         static Rectangle stepRect = { menuRect.x + 40, menuRect.y + 265, 170, 20 };
 
-        static GuiTextBoxControl height = GuiTextBoxControl(heightRect);
-        static GuiTextBoxControl step = GuiTextBoxControl(stepRect);
+        static GuiTextBoxControl height = GuiTextBoxControl(heightRect, heightT);
+        static GuiTextBoxControl step = GuiTextBoxControl(stepRect, circleStepT);
 
         centerX.DrawControl();
         centerY.DrawControl();
@@ -311,7 +337,7 @@ void UI::DrawAddMenu()
         GuiLabel({ menuRect.x + 20, menuRect.y + 190, 80, 15 }, "Height:");
         GuiLabel({ menuRect.x + 20, menuRect.y + 240, 80, 15 }, "Step:");
         
-        if (GuiButton(btnRect, "Add"))
+        if (GuiButton(btnRect, "OK"))
         {
             try {
                 Helix::HelixParams params;
@@ -338,13 +364,18 @@ void UI::DrawAddMenu()
 
                 params.color = GetRandomColor();
 
+                if (addMenuRequested)
+                    addMenuRequested = false;
+                else
+                {
+                    editMenuRequested = false;
+                    DrawDeleteMenu();
+                }
+
                 Helix* helix = new Helix(params);
                 vecFigures.emplace_back(helix);
-
+                
                 UpdateFigureList();
-
-                addMenuRequested = false;
-
             }
             catch (...)
             {
@@ -370,16 +401,84 @@ void UI::DrawAddMenu()
 
 void UI::DrawEditMenu() 
 {
-    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
-    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
-    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
+    for (auto fig : vecFigures) {
+        std::visit([](auto&& arg) {
+            if ((*arg).Properties.isHighlightedInMenu) {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_same_v<T, Circle*>) {
+                    DrawAddMenu
+                    (
+                        0,
+                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
+                        (char*)std::to_string((*arg).Properties.radius).c_str(),
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr
+                    );
+                }
+                else if constexpr (std::is_same_v<T, Ellipse*>) {
+                    DrawAddMenu
+                    (
+                        1,
+                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
+                        nullptr,
+                        (char*)std::to_string((*arg).Properties.radius.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.radius.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.radius.z).c_str(),
+                        nullptr,
+                        nullptr
+                    );
+                }
+                else if constexpr (std::is_same_v<T, Helix*>) {
+                    DrawAddMenu
+                    (
+                        2,
+                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
+                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
+                        (char*)std::to_string((*arg).Properties.radius).c_str(),
+                        nullptr,
+                        nullptr,
+                        (char*)std::to_string((*arg).Properties.height).c_str(),
+                        (char*)std::to_string((*arg).Properties.circleStep).c_str()
+
+                    );
+                }
+            }
+            }, fig);
+    }
 }
 
 void UI::DrawDeleteMenu() 
 {
-    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
+    for (auto it = vecFigures.begin(); it != vecFigures.end();) {
+        std::visit([&](auto&& arg) {
+            if ((*arg).Properties.isHighlightedInMenu) {
+                it = vecFigures.erase(it);
+            }
+            else {
+                it++;
+            }
+            }, (*it));
+    }
+    /*static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
     DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
-    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
+    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);*/
 }
 
 void UI::UpdateFigureList()
@@ -498,20 +597,21 @@ void UI::DrawFigureList()
 
 bool UI::isElementHighlighted()
 {
-    for (auto fig : vecFigures) {
-        std::visit([](auto arg)
-            { if ((*arg).Properties.isHighlightedInMenu) return true; },
+    bool fl = false;
+    for (auto& fig : vecFigures) {
+        std::visit([&](auto&& arg)
+            { if ((*arg).Properties.isHighlightedInMenu) fl=true; },
             fig
         );
     }
-    return false;
+    return fl;
 }
 
-UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r)
+UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r, char* s)
 {
     rect = r;
     editMode = false;
-    str = new char[100] {'\0'};
+    str = s;
 }
 
 void UI::GuiTextBoxControl::DrawControl()
