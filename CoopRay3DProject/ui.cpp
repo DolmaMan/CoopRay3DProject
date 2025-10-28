@@ -1,7 +1,10 @@
 #include "ui.h"
-bool addMenuRequested = false,
-     editMenuRequested = false,
-     deleteMenuRequested = false;
+
+namespace UI {
+    bool addMenuRequested = false,
+        editMenuRequested = false,
+        deleteMenuRequested = false;
+}
 
 void UI::DrawMainMenu() {
     if (
@@ -30,19 +33,27 @@ void UI::DrawMainMenu() {
     DrawTextEx(ListFonts[currentFontName], "R: Reset camera", { 10, 100 }, 16, 1, DARKGRAY);
     DrawTextEx(ListFonts[currentFontName], "ESC: Exit", { 10, 120 }, 16, 1, DARKGRAY);
     
-    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape")) { addMenuRequested = true; }
-    if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape")) 
+    if (GuiButton({ 20, 10, 120, 30 }, "Add Shape") &&
+        !editMenuRequested && !deleteMenuRequested) 
+    {
+        addMenuRequested = true;
+        ResetUiControls();
+    }
+    if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape") &&
+        !editMenuRequested && !addMenuRequested)
     {
         if(isElementHighlighted())
             deleteMenuRequested = true; 
     }
-    if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape")) 
+    if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape") &&
+        !addMenuRequested && !deleteMenuRequested)
     { 
         if (isElementHighlighted())
             editMenuRequested = true; 
     }
 
-    if (GuiButton({ (float)screenWidth - 140, 10, 120, 30 }, "Change Font"))
+    if (GuiButton({ (float)screenWidth - 140, 10, 120, 30 }, "Change Font")
+        && !editMenuRequested && !deleteMenuRequested && ! addMenuRequested)
     {
         if (currentFontName == "Consolas") {
             GuiSetFont(ListFonts["Minecraft"]);
@@ -101,8 +112,51 @@ void UI::DrawExitMenu() {
 
 }
 
+void UI::LoadUiControls() {
+    menusRect = { 420.0, 160.0, 400, 400 };
+
+    Rectangle centerRectX  = { menusRect.x + 40,  menusRect.y +  50, 90, 20 };
+    Rectangle centerRectY  = { menusRect.x + 170, menusRect.y +  50, 90, 20 };
+    Rectangle centerRectZ  = { menusRect.x + 300, menusRect.y +  50, 90, 20 };
+    Rectangle angleRectX   = { menusRect.x + 40,  menusRect.y + 110, 90, 20 };
+    Rectangle angleRectY   = { menusRect.x + 170, menusRect.y + 110, 90, 20 };
+    Rectangle angleRectZ   = { menusRect.x + 300, menusRect.y + 110, 90, 20 };
+    Rectangle radRect      = { menusRect.x + 40,  menusRect.y + 170, 90, 20 };
+    Rectangle heightRect   = { menusRect.x + 170, menusRect.y + 170, 90, 20 };
+    Rectangle stepRect     = { menusRect.x + 300, menusRect.y + 170, 90, 20 };
+    Rectangle radElRectX   = { menusRect.x + 40,  menusRect.y + 170, 90, 20 };
+    Rectangle radElRectY   = { menusRect.x + 170, menusRect.y + 170, 90, 20 };
+    Rectangle radElRectZ   = { menusRect.x + 300, menusRect.y + 170, 90, 20 };
+
+    mapUiControls["centerX"] = GuiTextBoxControl(centerRectX);
+    mapUiControls["centerY"] = GuiTextBoxControl(centerRectY);
+    mapUiControls["centerZ"] = GuiTextBoxControl(centerRectZ);
+
+    mapUiControls["angleX"] = GuiTextBoxControl(angleRectX);
+    mapUiControls["angleY"] = GuiTextBoxControl(angleRectY);
+    mapUiControls["angleZ"] = GuiTextBoxControl(angleRectZ);
+
+    mapUiControls["rad"] = GuiTextBoxControl(radRect);
+
+    mapUiControls["radElX"] = GuiTextBoxControl(radElRectX);
+    mapUiControls["radElY"] = GuiTextBoxControl(radElRectY);
+    mapUiControls["radElZ"] = GuiTextBoxControl(radElRectZ);
+
+    mapUiControls["height"] = GuiTextBoxControl(heightRect);
+    mapUiControls["step"] = GuiTextBoxControl(stepRect);
+}
+
+void UI::ResetUiControls()
+{
+    for (auto& pair : mapUiControls)
+    {
+        pair.second.str = new char[100] {'0'};
+    }
+}
+
 void UI::DrawAddMenu
     (
+        bool isEdit,
         int currentFigureInDropdownBox,
         char* centerXT,
         char* centerYT,
@@ -115,86 +169,84 @@ void UI::DrawAddMenu
         char* radElYT,
         char* radElZT,
         char* heightT,
-        char* circleStepT
+        char* circleStepT,
+        Color oldColor 
     ) 
 {
-    static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
-    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
-    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);
+    if(isEdit)
+    {
+        mapUiControls["centerX"].str = centerXT;
+        mapUiControls["centerY"].str = centerYT;
+        mapUiControls["centerZ"].str = centerZT;
+        mapUiControls["angleX"].str = angleXT;
+        mapUiControls["angleY"].str = angleYT;
+        mapUiControls["angleZ"].str = angleZT;
+        mapUiControls["rad"].str = radT;
+        mapUiControls["radElX"].str = radElXT;
+        mapUiControls["radElY"].str = radElYT;
+        mapUiControls["radElZ"].str = radElZT;
+        mapUiControls["height"].str = heightT;
+        mapUiControls["step"].str = circleStepT;
+    }
+
+    DrawRectanglePro(menusRect, { 0, 0 }, 0, WHITE);
+    DrawRectangleLines(menusRect.x + 1, menusRect.y, menusRect.width - 1, menusRect.height - 1, BLACK);
 
     static bool isWrongFields = false;
 
-    static Rectangle centerRectX = { menuRect.x + 40, menuRect.y + 65, 30, 20};
-    static Rectangle centerRectY = { menuRect.x + 110, menuRect.y + 65, 30, 20 };
-    static Rectangle centerRectZ = { menuRect.x + 180, menuRect.y + 65, 30, 20 };
-
-    static Rectangle angleRectX = { menuRect.x + 40, menuRect.y + 115, 30, 20 };
-    static Rectangle angleRectY = { menuRect.x + 110, menuRect.y + 115, 30, 20 };
-    static Rectangle angleRectZ = { menuRect.x + 180, menuRect.y + 115, 30, 20 };
-
-    static Rectangle radRect = { menuRect.x + 40, menuRect.y + 165, 170, 20 };
-
-    static GuiTextBoxControl centerX = GuiTextBoxControl(centerRectX, centerXT);
-    static GuiTextBoxControl centerY = GuiTextBoxControl(centerRectY, centerYT);
-    static GuiTextBoxControl centerZ = GuiTextBoxControl(centerRectZ, centerZT);
-    static GuiTextBoxControl angleX = GuiTextBoxControl(angleRectX, angleXT);
-    static GuiTextBoxControl angleY = GuiTextBoxControl(angleRectY, angleYT);
-    static GuiTextBoxControl angleZ = GuiTextBoxControl(angleRectZ, angleZT);
-    static GuiTextBoxControl rad = GuiTextBoxControl(radRect, radT);
-
-    static Rectangle btnRect = { menuRect.x + 160, menuRect.y + 350, 100, 30 };
+    static Rectangle btnRect = { menusRect.x + 160, menusRect.y + 350, 100, 30 };
 
     static const char* figStr = "Circle;Ellipse;Helix";
     static int selectedIndex = currentFigureInDropdownBox;
     static bool editMode = false;
-    if (GuiDropdownBox({ menuRect.x + 250, menuRect.y + 65, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
+    if (GuiDropdownBox({ menusRect.x + 145, menusRect.y + 230, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
     if (selectedIndex == 0)
     {
-        centerX.DrawControl();
-        centerY.DrawControl();
-        centerZ.DrawControl();
-        angleX.DrawControl();
-        angleY.DrawControl();
-        angleZ.DrawControl();
-        rad.DrawControl();
+        mapUiControls["centerX"].DrawControl();
+        mapUiControls["centerY"].DrawControl();
+        mapUiControls["centerZ"].DrawControl();
+        mapUiControls["angleX"].DrawControl();
+        mapUiControls["angleY"].DrawControl();
+        mapUiControls["angleZ"].DrawControl();
+        mapUiControls["rad"].DrawControl();
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 30, 120, 15 }, "Center XYZ:");
 
-        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
-        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ mapUiControls["centerX"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["centerY"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["centerZ"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 90, 120, 15 }, "Angle XYZ:");
 
-        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
-        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ mapUiControls["angleX"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["angleY"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["angleZ"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 150, 120, 15 }, "Radius:");
 
         if (GuiButton(btnRect, "OK"))
         {
-            try 
-            {
+            try{
                 Circle::CircleParams params;
                 params.center =
                 {
-                    strtof(centerX.str, NULL),
-                    strtof(centerY.str, NULL),
-                    strtof(centerZ.str, NULL)
+                    strtof(mapUiControls["centerX"].str, NULL),
+                    strtof(mapUiControls["centerY"].str, NULL),
+                    strtof(mapUiControls["centerZ"].str, NULL)
                 };
                 params.tiltAngles =
                 {
-                    strtof(angleX.str, NULL),
-                    strtof(angleY.str, NULL),
-                    strtof(angleZ.str, NULL),
+                    strtof(mapUiControls["angleX"].str, NULL),
+                    strtof(mapUiControls["angleY"].str, NULL),
+                    strtof(mapUiControls["angleZ"].str, NULL),
                 };
-                float radius = strtof(rad.str, NULL);
+                float radius = strtof(mapUiControls["rad"].str, NULL);
                 if (radius == 0)
                     throw "";
                 else
                     params.radius = radius;
-                params.color = GetRandomColor();
+
+                params.color = (isEdit) ? oldColor : GetRandomColor();
 
                 if (addMenuRequested)
                     addMenuRequested = false;
@@ -209,7 +261,7 @@ void UI::DrawAddMenu
 
                 UpdateFigureList();
             }
-            catch(...) 
+            catch (...)
             {
                 isWrongFields = true;
             }
@@ -217,40 +269,33 @@ void UI::DrawAddMenu
     }
     else if (selectedIndex == 1)
     {
-        static Rectangle radElRectX = { menuRect.x + 40, menuRect.y + 165, 30, 20 };
-        static Rectangle radElRectY = { menuRect.x + 110, menuRect.y + 165, 30, 20 };
-        static Rectangle radElRectZ = { menuRect.x + 180, menuRect.y + 165, 30, 20 };
-        static GuiTextBoxControl radElX = GuiTextBoxControl(radElRectX, radElXT);
-        static GuiTextBoxControl radElY = GuiTextBoxControl(radElRectY, radElYT);
-        static GuiTextBoxControl radElZ = GuiTextBoxControl(radElRectZ, radElZT);
+        mapUiControls["centerX"].DrawControl();
+        mapUiControls["centerY"].DrawControl();
+        mapUiControls["centerZ"].DrawControl();
+        mapUiControls["angleX"].DrawControl();
+        mapUiControls["angleY"].DrawControl();
+        mapUiControls["angleZ"].DrawControl();
+        mapUiControls["radElX"].DrawControl();
+        mapUiControls["radElY"].DrawControl();
+        mapUiControls["radElZ"].DrawControl();
 
-        centerX.DrawControl();
-        centerY.DrawControl();
-        centerZ.DrawControl();
-        angleX.DrawControl();
-        angleY.DrawControl();
-        angleZ.DrawControl();
-        radElX.DrawControl();
-        radElY.DrawControl();
-        radElZ.DrawControl();
+        GuiLabel({ menusRect.x + 20, menusRect.y + 30, 120, 15 }, "Center XYZ:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
+        GuiLabel({ mapUiControls["centerX"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["centerY"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["centerZ"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
-        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 90, 120, 15 }, "Angle XYZ:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
+        GuiLabel({ mapUiControls["angleX"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["angleY"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["angleZ"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
-        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 150, 120, 15 }, "Radius XYZ:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 120, 15 }, "Radius XYZ:");
-
-        GuiLabel({ radElRectX.x - 20, radElRectX.y, 20, 20 }, "X:");
-        GuiLabel({ radElRectY.x - 20, radElRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ radElRectZ.x - 20, radElRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ mapUiControls["radElX"].rect.x - 20, mapUiControls["radElX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["radElY"].rect.x - 20, mapUiControls["radElX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["radElZ"].rect.x - 20, mapUiControls["radElX"].rect.y, 20, 20 }, "Z:");
         
         if (GuiButton(btnRect, "OK"))
         {
@@ -258,21 +303,21 @@ void UI::DrawAddMenu
                 Ellipse::EllipseParams params;
                 params.center =
                 {
-                    strtof(centerX.str, NULL),
-                    strtof(centerY.str, NULL),
-                    strtof(centerZ.str, NULL)
+                    strtof(mapUiControls["centerX"].str, NULL),
+                    strtof(mapUiControls["centerY"].str, NULL),
+                    strtof(mapUiControls["centerZ"].str, NULL)
                 };
                 params.tiltAngles =
                 {
-                    strtof(angleX.str, NULL),
-                    strtof(angleY.str, NULL),
-                    strtof(angleZ.str, NULL)
+                    strtof(mapUiControls["angleX"].str, NULL),
+                    strtof(mapUiControls["angleY"].str, NULL),
+                    strtof(mapUiControls["angleZ"].str, NULL)
                 };
                 Vector3 radius =
                 {
-                    strtof(radElX.str, NULL),
-                    strtof(radElY.str, NULL),
-                    strtof(radElZ.str, NULL)
+                    strtof(mapUiControls["radElX"].str, NULL),
+                    strtof(mapUiControls["radElY"].str, NULL),
+                    strtof(mapUiControls["radElZ"].str, NULL)
                 };
                 if (
                     radius.x == 0 ||
@@ -282,7 +327,8 @@ void UI::DrawAddMenu
                     throw "";
                 else
                     params.radius = radius;
-                params.color = GetRandomColor();
+                
+                params.color = (isEdit) ? oldColor : GetRandomColor();
 
                 if (addMenuRequested)
                     addMenuRequested = false;
@@ -305,37 +351,31 @@ void UI::DrawAddMenu
     }
     else if (selectedIndex == 2)
     {
-        static Rectangle heightRect = { menuRect.x + 40, menuRect.y + 215, 170, 20 };
-        static Rectangle stepRect = { menuRect.x + 40, menuRect.y + 265, 170, 20 };
+        mapUiControls["centerX"].DrawControl();
+        mapUiControls["centerY"].DrawControl();
+        mapUiControls["centerZ"].DrawControl();
+        mapUiControls["angleX"].DrawControl();
+        mapUiControls["angleY"].DrawControl();
+        mapUiControls["angleZ"].DrawControl();
+        mapUiControls["rad"].DrawControl();
+        mapUiControls["height"].DrawControl();
+        mapUiControls["step"].DrawControl();
 
-        static GuiTextBoxControl height = GuiTextBoxControl(heightRect, heightT);
-        static GuiTextBoxControl step = GuiTextBoxControl(stepRect, circleStepT);
+        GuiLabel({ menusRect.x + 20, menusRect.y + 30, 120, 15 }, "Center XYZ:");
 
-        centerX.DrawControl();
-        centerY.DrawControl();
-        centerZ.DrawControl();
-        angleX.DrawControl();
-        angleY.DrawControl();
-        angleZ.DrawControl();
-        rad.DrawControl();
-        height.DrawControl();
-        step.DrawControl();
+        GuiLabel({ mapUiControls["centerX"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["centerY"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["centerZ"].rect.x - 20, mapUiControls["centerX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 40, 120, 15 }, "Center XYZ:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 90, 120, 15 }, "Angle XYZ:");
 
-        GuiLabel({ centerRectX.x - 20, centerRectX.y, 20, 20 }, "X:");
-        GuiLabel({ centerRectY.x - 20, centerRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ centerRectZ.x - 20, centerRectX.y, 20, 20 }, "Z:");
+        GuiLabel({ mapUiControls["angleX"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "X:");
+        GuiLabel({ mapUiControls["angleY"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Y:");
+        GuiLabel({ mapUiControls["angleZ"].rect.x - 20, mapUiControls["angleX"].rect.y, 20, 20 }, "Z:");
 
-        GuiLabel({ menuRect.x + 20, menuRect.y + 90, 120, 15 }, "Angle XYZ:");
-
-        GuiLabel({ angleRectX.x - 20, angleRectX.y, 20, 20 }, "X:");
-        GuiLabel({ angleRectY.x - 20, angleRectX.y, 20, 20 }, "Y:");
-        GuiLabel({ angleRectZ.x - 20, angleRectX.y, 20, 20 }, "Z:");
-
-        GuiLabel({ menuRect.x + 20, menuRect.y + 140, 80, 15 }, "Radius:");
-        GuiLabel({ menuRect.x + 20, menuRect.y + 190, 80, 15 }, "Height:");
-        GuiLabel({ menuRect.x + 20, menuRect.y + 240, 80, 15 }, "Step:");
+        GuiLabel({ menusRect.x + 20, menusRect.y + 150, 120, 15 }, "Radius:");
+        GuiLabel({ menusRect.x + 150, menusRect.y + 150, 80, 15 }, "Height:");
+        GuiLabel({ menusRect.x + 280, menusRect.y + 150, 80, 15 }, "Step:");
         
         if (GuiButton(btnRect, "OK"))
         {
@@ -343,26 +383,26 @@ void UI::DrawAddMenu
                 Helix::HelixParams params;
                 params.center =
                 {
-                    strtof(centerX.str, NULL),
-                    strtof(centerY.str, NULL),
-                    strtof(centerZ.str, NULL)
+                    strtof(mapUiControls["centerX"].str, NULL),
+                    strtof(mapUiControls["centerY"].str, NULL),
+                    strtof(mapUiControls["centerZ"].str, NULL)
                 };
                 params.tiltAngles =
                 {
-                    strtof(angleX.str, NULL),
-                    strtof(angleY.str, NULL),
-                    strtof(angleZ.str, NULL),
+                    strtof(mapUiControls["angleX"].str, NULL),
+                    strtof(mapUiControls["angleY"].str, NULL),
+                    strtof(mapUiControls["angleZ"].str, NULL),
                 };
-                float radius = strtof(rad.str, NULL);
+                float radius = strtof(mapUiControls["rad"].str, NULL);
                 params.radius = (radius==0)?throw"":radius;
 
-                float h = strtof(height.str, NULL);
+                float h = strtof(mapUiControls["height"].str, NULL);
                 params.height = (h == 0)?throw"":h;
 
-                float s = strtof(step.str, NULL);
+                float s = strtof(mapUiControls["step"].str, NULL);
                 params.circleStep = (s == 0)?throw"":s;
 
-                params.color = GetRandomColor();
+                params.color = (isEdit) ? oldColor : GetRandomColor();
 
                 if (addMenuRequested)
                     addMenuRequested = false;
@@ -384,8 +424,9 @@ void UI::DrawAddMenu
         }
     }
 
-    if (GuiButton({ menuRect.x + 375, menuRect.y, 25, 25 }, "X"))
+    if (GuiButton({ menusRect.x + 375, menusRect.y, 25, 25 }, "X"))
     {
+        editMenuRequested = false;
         addMenuRequested = false;
     }
 
@@ -408,6 +449,7 @@ void UI::DrawEditMenu()
                 if constexpr (std::is_same_v<T, Circle*>) {
                     DrawAddMenu
                     (
+                        true,
                         0,
                         (char*)std::to_string((*arg).Properties.center.x).c_str(),
                         (char*)std::to_string((*arg).Properties.center.y).c_str(),
@@ -420,12 +462,14 @@ void UI::DrawEditMenu()
                         nullptr,
                         nullptr,
                         nullptr,
-                        nullptr
+                        nullptr,
+                        (*arg).Properties.color
                     );
                 }
                 else if constexpr (std::is_same_v<T, Ellipse*>) {
                     DrawAddMenu
                     (
+                        true,
                         1,
                         (char*)std::to_string((*arg).Properties.center.x).c_str(),
                         (char*)std::to_string((*arg).Properties.center.y).c_str(),
@@ -438,12 +482,14 @@ void UI::DrawEditMenu()
                         (char*)std::to_string((*arg).Properties.radius.y).c_str(),
                         (char*)std::to_string((*arg).Properties.radius.z).c_str(),
                         nullptr,
-                        nullptr
+                        nullptr,
+                        (*arg).Properties.color
                     );
                 }
                 else if constexpr (std::is_same_v<T, Helix*>) {
                     DrawAddMenu
                     (
+                        true,
                         2,
                         (char*)std::to_string((*arg).Properties.center.x).c_str(),
                         (char*)std::to_string((*arg).Properties.center.y).c_str(),
@@ -454,9 +500,10 @@ void UI::DrawEditMenu()
                         (char*)std::to_string((*arg).Properties.radius).c_str(),
                         nullptr,
                         nullptr,
+                        nullptr,
                         (char*)std::to_string((*arg).Properties.height).c_str(),
-                        (char*)std::to_string((*arg).Properties.circleStep).c_str()
-
+                        (char*)std::to_string((*arg).Properties.circleStep).c_str(),
+                        (*arg).Properties.color
                     );
                 }
             }
@@ -476,9 +523,8 @@ void UI::DrawDeleteMenu()
             }
             }, (*it));
     }
-    /*static Rectangle menuRect = { 420.0, 160.0, 400, 400 };
-    DrawRectanglePro(menuRect, { 0, 0 }, 0, WHITE);
-    DrawRectangleLines(menuRect.x + 1, menuRect.y, menuRect.width - 1, menuRect.height - 1, BLACK);*/
+    UpdateFigureList();
+    deleteMenuRequested = false;
 }
 
 void UI::UpdateFigureList()
@@ -612,6 +658,13 @@ UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r, char* s)
     rect = r;
     editMode = false;
     str = s;
+}
+
+UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r)
+{
+    rect = r;
+    editMode = false;
+    str = new char[100] {'0'};
 }
 
 void UI::GuiTextBoxControl::DrawControl()

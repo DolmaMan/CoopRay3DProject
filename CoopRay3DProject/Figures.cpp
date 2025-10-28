@@ -170,7 +170,7 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         Vector3 point = rotatePoint(0, (*ellipse).Properties.radius.y * cosf(angle), (*ellipse).Properties.radius.z * sinf(angle));
 
         if (!firstPointX) {
-            if((*ellipse).Properties.isHighlightedInMenu)
+            if(!(*ellipse).Properties.isHighlightedInMenu)
                 DrawLine3D(prevPointX, point, (*ellipse).Properties.color);
             else
                 DrawLine3D(prevPointX, point, RED);
@@ -187,7 +187,7 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         Vector3 point = rotatePoint((*ellipse).Properties.radius.x * cosf(angle), 0, (*ellipse).Properties.radius.z * sinf(angle));
 
         if (!firstPointY) {
-            if ((*ellipse).Properties.isHighlightedInMenu)
+            if (!(*ellipse).Properties.isHighlightedInMenu)
                 DrawLine3D(prevPointY, point, (*ellipse).Properties.color);
             else
                 DrawLine3D(prevPointY, point, RED);

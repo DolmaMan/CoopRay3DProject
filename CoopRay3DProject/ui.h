@@ -6,10 +6,29 @@
 #include"Drawer.h"
 
 namespace UI {
+    struct GuiTextBoxControl {
+        char* str;
+        Rectangle rect;
+        bool editMode;
+
+        GuiTextBoxControl(Rectangle r, char* s);
+        GuiTextBoxControl(Rectangle r);
+        GuiTextBoxControl() : GuiTextBoxControl({0,0,0,0}){}
+
+        void DrawControl();
+    };
+
+    static std::unordered_map<std::string, GuiTextBoxControl> mapUiControls;
+    static Rectangle menusRect;
+
+    void LoadUiControls();
+    void ResetUiControls();
+
     void DrawMainMenu();
     void DrawExitMenu();
     void DrawAddMenu
     (
+        bool isEdit                       = false,
         int currentFigureInDropdownBox    = 0,
         char* centerXT                    = new char[100] {'\0'},
         char* centerYT                    = new char[100] {'\0'},
@@ -22,8 +41,10 @@ namespace UI {
         char* radElYT                     = new char[100] {'\0'},
         char* radElZT                     = new char[100] {'\0'},
         char* heightT                     = new char[100] {'\0'},
-        char* circleStepT                 = new char[100] {'\0'}
+        char* circleStepT                 = new char[100] {'\0'},
+        Color color                       = BLACK
     );
+
     void DrawEditMenu();
     void DrawDeleteMenu();
     
@@ -32,15 +53,5 @@ namespace UI {
     void DrawFigureList();
 
     bool isElementHighlighted();
-    
-    struct GuiTextBoxControl {
-        char* str;
-        Rectangle rect;
-        bool editMode;
-
-        GuiTextBoxControl(Rectangle r, char* s);
-
-        void DrawControl();
-    };
 }
 
