@@ -38,29 +38,6 @@ void Camera3DController::HandleInput() {
         if (IsCursorHidden()) EnableCursor();
         else DisableCursor();
     }
-
-
-    //Адекватно сделать отрисовку фигур, потом это
-    // 
-    //if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //{
-    //    if (!collision.hit)
-    //    {
-    //        ray = GetScreenToWorldRay(GetMousePosition(), camera);
-
-    //        // Check collision between ray and box
-    //        collision = GetRayCollisionBox(ray,
-    //            (BoundingBox) {
-    //            (Vector3) {
-    //            cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2
-    //        },
-    //                (Vector3) {
-    //                cubePosition.x + cubeSize.x / 2, cubePosition.y + cubeSize.y / 2, cubePosition.z + cubeSize.z / 2
-    //            }
-    //        });
-    //    }
-    //    else collision.hit = false;
-    //}
 }
 
 void InitProgram() {

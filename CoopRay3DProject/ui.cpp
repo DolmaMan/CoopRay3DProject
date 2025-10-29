@@ -4,6 +4,8 @@ namespace UI {
     bool addMenuRequested = false,
         editMenuRequested = false,
         deleteMenuRequested = false;
+    bool showMessageBox;
+    bool showExitMenu;
 }
 
 void UI::DrawMainMenu() {
@@ -42,8 +44,11 @@ void UI::DrawMainMenu() {
     if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape") &&
         !editMenuRequested && !addMenuRequested)
     {
-        if(isElementHighlighted())
-            deleteMenuRequested = true; 
+        if (isElementHighlighted()) {
+            deleteMenuRequested = true;
+            showMessageBox = true;
+        }
+        
     }
     if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape") &&
         !addMenuRequested && !deleteMenuRequested)
@@ -85,30 +90,35 @@ void UI::DrawMainMenu() {
 
     DrawFigureList();
     DrawFPS(screenWidth - 80, screenHeight - 25);
-
+    DrawExitMenu();
     EndDrawing();
 
     if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
         //PlaySound(ListSounds["General_Quitgame.wav"]);
-        //currentEnum = MenusEnum::ExitMenu;
-        exitWindow = true;  //Вернуть в конце
+        showExitMenu = true;
+        //exitWindow = true;  //Вернуть в конце
     }
 }
 
 void UI::DrawExitMenu() {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
 
+    if (showExitMenu)
+    {
+        int MBresult = GuiMessageBox({ 470, 270, 320, 90 },
+            "#191#Exit", "Are you sure you want to exit?", "Yes;No");
 
-    // ÑÄÅËÀÒÜ ÌÅÍÞ ÂÛÕÎÄÀ
-    Color BgCol = { 0, 0, 0, 200 };
-    DrawRectangle(0, 200, screenWidth, 200, BgCol);
-    DrawTextEx(ListFonts[currentFontName], "Are you sure you want to exit program? [Y/N]", { 40, 270 }, 30, 1, WHITE);
+        if (MBresult == 1)
+        {
+            exitWindow = true;
+        }
+        else if (MBresult == 2 || MBresult == 0)
+        {
+            showExitMenu = false; 
+        }
+        
+        if (IsKeyPressed(KEY_ESCAPE)) showExitMenu = false;
 
-    EndDrawing();
-
-    if (IsKeyPressed(KEY_Y) || WindowShouldClose()) exitWindow = true;
-    else if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_N)) currentEnum = MenusEnum::MainMenu;
+    }
 
 }
 
@@ -433,7 +443,7 @@ void UI::DrawAddMenu
     if (isWrongFields) {
         DrawTextEx(
             ListFonts[currentFontName],
-            "All fields must be filled in\nand only with numbers",
+            "All fields must be filled in\n   and only with numbers",
             { btnRect.x - 60, btnRect.y - 40 }, 16, 0, BLACK);
     }
     
@@ -513,18 +523,33 @@ void UI::DrawEditMenu()
 
 void UI::DrawDeleteMenu() 
 {
-    for (auto it = vecFigures.begin(); it != vecFigures.end();) {
-        std::visit([&](auto&& arg) {
-            if ((*arg).Properties.isHighlightedInMenu) {
-                it = vecFigures.erase(it);
+    if (showMessageBox) {
+        int delMBres = GuiMessageBox({ 470, 270, 320, 90 },
+            "#191#Delete", "Delete figure?", "Yes;No");
+        if (delMBres == 1)
+        {
+            for (auto it = vecFigures.begin(); it != vecFigures.end();) {
+                std::visit([&](auto&& arg) {
+                    if ((*arg).Properties.isHighlightedInMenu) {
+                        it = vecFigures.erase(it);
+                    }
+                    else {
+                        it++;
+                    }
+                    }, (*it));
             }
-            else {
-                it++;
-            }
-            }, (*it));
+            showMessageBox = false;
+            deleteMenuRequested = false;
+            UpdateFigureList();
+        }
+        else if (delMBres == 2 || delMBres == 0)
+        {
+            showMessageBox = false;
+            deleteMenuRequested = false;
+            UpdateFigureList();
+        }
+        
     }
-    UpdateFigureList();
-    deleteMenuRequested = false;
 }
 
 void UI::UpdateFigureList()

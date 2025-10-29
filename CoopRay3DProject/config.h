@@ -23,8 +23,5 @@ extern Camera3DController cameraController;
 
 extern RenderTexture screenTexture;
 
-enum MenusEnum { MainMenu, ExitMenu };
-extern MenusEnum currentEnum;
-
 extern std::unordered_map<std::string, Font> ListFonts;
 extern std::string currentFontName;

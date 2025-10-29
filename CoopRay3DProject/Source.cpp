@@ -27,7 +27,6 @@ Camera3DController cameraController;
 RenderTexture screenTexture;
 RenderTexture addMenuTexture;
 
-MenusEnum currentEnum;
 
 std::unordered_map<std::string, Font> ListFonts;
 std::string currentFontName;
@@ -70,7 +69,6 @@ int main()
     screenTexture = LoadRenderTexture(screenWidth - 300, screenHeight - 80);
     screenTextureRect = { 0.0f, 0.0f, (float)screenTexture.texture.width, (float)-screenTexture.texture.height };
     
-    currentEnum = MainMenu;
 
     bigRect = { 0.0f ,50.0f, (float)screenWidth, (float)screenHeight - 80 };
     listFiguresRect = { (float)screenWidth - 300, 135, 300, (float)screenHeight - 165 };
@@ -86,14 +84,7 @@ int main()
     GuiSetStyle(DEFAULT, TEXT_SIZE, 14);
 
     while (!exitWindow) {
-        switch (currentEnum) {
-        case MainMenu: {
             UI::DrawMainMenu();
-        }break;
-        case ExitMenu: {
-            UI::DrawExitMenu();
-        }break;
-        }
     }
 
     CleanupProgram();
