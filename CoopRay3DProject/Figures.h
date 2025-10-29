@@ -38,7 +38,6 @@ public:
 	CircleParams Properties;
 
 	Circle(CircleParams p);
-	~Circle();
 
 	static void DrawCircle(Circle* circle, int segments = 320);
 	std::string getClassName() const override { return "Circle"; }

@@ -37,12 +37,10 @@ void LoadSounds() {
     std::string folder_path = "..\\assets\\audio";
 
     try {
-        // Ñîçäàåì èòåðàòîð äëÿ ïàïêè
         for (const auto& entry : std::filesystem::directory_iterator(folder_path)) {
-            // Ïîëó÷àåì èíôîðìàöèþ î òåêóùåì ýëåìåíòå
-            std::string file_path = entry.path().string(); // Ïîëíûé ïóòü ê ôàéëó/ïàïêå
+            std::string file_path = entry.path().string();
 
-            if (entry.is_regular_file()) { // Åñëè ýòî îáû÷íûé ôàéë
+            if (entry.is_regular_file()) {
                 ListSounds[entry.path().filename().string()] = LoadSound(entry.path().string().c_str());
             }
         }
@@ -83,8 +81,10 @@ int main()
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, 14);
 
+    PlaySound(ListSounds["General_Startgame.wav"]);
+
     while (!exitWindow) {
-            UI::DrawMainMenu();
+        UI::DrawMainMenu();
     }
 
     CleanupProgram();

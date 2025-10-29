@@ -24,10 +24,3 @@ struct Camera3DController {
 
 void InitProgram();
 void CleanupProgram();
-
-
-class InitProgram
-{
-
-};
-

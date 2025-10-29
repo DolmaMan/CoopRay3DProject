@@ -5,8 +5,6 @@ Color GetRandomColor()
     static std::vector<Color> vecColors
     {
         DARKGRAY,
-        //YELLOW,
-        //GOLD,
         ORANGE,
         PINK,
         MAROON,
@@ -25,24 +23,6 @@ Color GetRandomColor()
         BLACK
     };
     return vecColors[GetRandomValue(0, vecColors.size() - 1)];
-
-    /*int R = GetRandomValue(0, 255);
-    int G = GetRandomValue(0, 255);
-    int B = GetRandomValue(0, 255);
-    double delta, min;
-    double h = 0, s, v;
-    min = std::min(std::min(R, G), B);
-    v = std::max(std::max(R, G), B);
-    delta = v - min;
-    if (v == 0.0) s = 0; else s = delta / v;
-    if (s == 0) h = 0.0; else {
-        if (R == v) h = (G - B) / delta;
-        else if (G == v) h = 2 + (B - R) / delta;
-        else if (B == v) h = 4 + (R - G) / delta;
-        h *= 60;
-        if (h < 0.0) h = h + 360;
-    }
-    return ColorFromHSV(h, s, (v / 255));*/
 }
 
 Circle::Circle(CircleParams p)
@@ -55,13 +35,6 @@ Circle::Circle(CircleParams p)
     Properties.isHighlightedInMenu = p.isHighlightedInMenu;
 }
 
-Circle::~Circle()
-{
-    
-}
-
-
-
 void Circle::DrawCircle(Circle* circle, int segments)
 {
     Vector3 tiltAngles = (*circle).Properties.tiltAngles;
@@ -70,7 +43,6 @@ void Circle::DrawCircle(Circle* circle, int segments)
     float tiltYRad = tiltAngles.y * DEG2RAD;
     float tiltZRad = tiltAngles.z * DEG2RAD;
 
-    // Предварительно вычисляем синусы и косинусы для каждого наклона
     float cosX = cosf(tiltXRad);
     float sinX = sinf(tiltXRad);
     float cosY = cosf(tiltYRad);
@@ -78,7 +50,6 @@ void Circle::DrawCircle(Circle* circle, int segments)
     float cosZ = cosf(tiltZRad);
     float sinZ = sinf(tiltZRad);
 
-    // Создаем точки окружности с учетом наклона
     Vector3 prevPoint;
     bool firstPoint = true;
 
@@ -87,34 +58,32 @@ void Circle::DrawCircle(Circle* circle, int segments)
         float cosAngle = cosf(angle);
         float sinAngle = sinf(angle);
 
-        // Базовая точка в плоскости XZ (без наклона)
+        // точки без наклона
         float x = cosAngle * (*circle).Properties.radius;
         float y = 0.0f;
         float z = sinAngle * (*circle).Properties.radius;
 
-        // Применяем наклон по Z (вращение вокруг Z)
+        // наклон по Z
         float x1 = x * cosZ - y * sinZ;
         float y1 = x * sinZ + y * cosZ;
         float z1 = z;
 
-        // Применяем наклон по Y (вращение вокруг Y)
+        // наклон по Y
         float x2 = x1 * cosY + z1 * sinY;
         float y2 = y1;
         float z2 = -x1 * sinY + z1 * cosY;
 
-        // Применяем наклон по X (вращение вокруг X)
+        // наклон по X
         float x3 = x2;
         float y3 = y2 * cosX - z2 * sinX;
         float z3 = y2 * sinX + z2 * cosX;
 
-        // Смещаем к центру
         Vector3 currentPoint = {
             (*circle).Properties.center.x + x3,
             (*circle).Properties.center.y + y3,
             (*circle).Properties.center.z + z3
         };
 
-        // Рисуем линию от предыдущей точки к текущей
         if (!firstPoint) {
             if(!(*circle).Properties.isHighlightedInMenu)
                 DrawLine3D(prevPoint, currentPoint, (*circle).Properties.color);
@@ -133,24 +102,23 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
     float ry = (*ellipse).Properties.tiltAngles.y * DEG2RAD;
     float rz = (*ellipse).Properties.tiltAngles.z * DEG2RAD;
 
-    // Вычисляем синусы и косинусы для каждого угла
     float cx = cosf(rx), sx = sinf(rx);
     float cy = cosf(ry), sy = sinf(ry);
     float cz = cosf(rz), sz = sinf(rz);
 
-    // Функция для применения поворота к точке
+    // лямбда для поворота
     auto rotatePoint = [&](float x, float y, float z) -> Vector3 {
-        // Поворот вокруг Z
+        // поворот вокруг Z
         float x1 = x * cz - y * sz;
         float y1 = x * sz + y * cz;
         float z1 = z;
 
-        // Поворот вокруг Y
+        // поворот вокруг Y
         float x2 = x1 * cy + z1 * sy;
         float y2 = y1;
         float z2 = -x1 * sy + z1 * cy;
 
-        // Поворот вокруг X
+        // поворот вокруг X
         float x3 = x2;
         float y3 = y2 * cx - z2 * sx;
         float z3 = y2 * sx + z2 * cx;
@@ -162,7 +130,7 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         };
     };
 
-    // Ось X (эллипс в плоскости YZ)
+    // плоскость YZ
     Vector3 prevPointX;
     bool firstPointX = true;
     for (int i = 0; i <= segments; i++) {
@@ -179,7 +147,7 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         firstPointX = false;
     }
 
-    // Ось Y (эллипс в плоскости XZ)
+    // плоскость XZ
     Vector3 prevPointY;
     bool firstPointY = true;
     for (int i = 0; i <= segments; i++) {
@@ -196,7 +164,7 @@ void Ellipse::DrawEllipse(Ellipse* ellipse, int segments)
         firstPointY = false;
     }
 
-    // Ось Z (эллипс в плоскости XY)
+    // плоскость XY
     Vector3 prevPointZ;
     bool firstPointZ = true;
     for (int i = 0; i <= segments; i++) {
@@ -220,16 +188,15 @@ void Helix::DrawHelix(Helix* helix)
     float ry = (*helix).Properties.tiltAngles.y * DEG2RAD;
     float rz = (*helix).Properties.tiltAngles.z * DEG2RAD;
 
-    // Вычисляем синусы и косинусы для каждого угла
+    // синусы и косинусы для каждого угла
     float cx = cosf(rx), sx = sinf(rx);
     float cy = cosf(ry), sy = sinf(ry);
     float cz = cosf(rz), sz = sinf(rz);
 
-    // Рассчитываем общее количество витков на основе высоты и шага
+    // общее количество витков
     float totalCircles = (*helix).Properties.height / (*helix).Properties.circleStep;
     float totalAngle = totalCircles * 2.0f * PI;
 
-    // Рассчитываем количество сегментов
     int segments = (int)(totalAngle * 10.0f); // 10 сегментов на радиан
     if (segments < 36) segments = 36;
 
@@ -237,32 +204,29 @@ void Helix::DrawHelix(Helix* helix)
     bool firstPoint = true;
 
     for (int i = 0; i <= segments; i++) {
-        // Вычисляем текущий угол и высоту
+        // текущий угол и высота
         float currentAngle = (float)i / (float)segments * totalAngle;
         float currentHeight = ((float)i / (float)segments - 0.5f) * (*helix).Properties.height;
 
-        // Вычисляем координаты точки на спирали в локальной системе
         float localX = (*helix).Properties.radius * cosf(currentAngle);
         float localY = (*helix).Properties.radius * sinf(currentAngle);
         float localZ = currentHeight;
 
-        // Применяем наклон (поворот точки)
-        // Поворот вокруг Z
+        // поворот вокруг Z
         float x1 = localX * cz - localY * sz;
         float y1 = localX * sz + localY * cz;
         float z1 = localZ;
 
-        // Поворот вокруг Y
+        // поворот вокруг Y
         float x2 = x1 * cy + z1 * sy;
         float y2 = y1;
         float z2 = -x1 * sy + z1 * cy;
 
-        // Поворот вокруг X
+        // поворот вокруг X
         float x3 = x2;
         float y3 = y2 * cx - z2 * sx;
         float z3 = y2 * sx + z2 * cx;
 
-        // Смещаем точку в центр
         Vector3 point = {
             (*helix).Properties.center.x + x3,
             (*helix).Properties.center.y + y3,

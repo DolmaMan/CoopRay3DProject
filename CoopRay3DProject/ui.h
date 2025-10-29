@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include<iostream>
 #include "raygui.h"
 #include"config.h"
 #include"InitProgram.h"
@@ -7,15 +8,16 @@
 
 namespace UI {
     struct GuiTextBoxControl {
-        char* str;
+        char str[100];
+        char secStr[100];
         Rectangle rect;
         bool editMode;
 
-        GuiTextBoxControl(Rectangle r, char* s);
-        GuiTextBoxControl(Rectangle r);
+        GuiTextBoxControl(Rectangle r, const char* s = "0");
         GuiTextBoxControl() : GuiTextBoxControl({0,0,0,0}){}
 
         void DrawControl();
+        void SetSecStr(const char*);
     };
 
     static std::unordered_map<std::string, GuiTextBoxControl> mapUiControls;
@@ -23,6 +25,7 @@ namespace UI {
 
     void LoadUiControls();
     void ResetUiControls();
+    void UpdateUiControls();
 
     void DrawMainMenu();
     void DrawExitMenu();
@@ -30,18 +33,6 @@ namespace UI {
     (
         bool isEdit                       = false,
         int currentFigureInDropdownBox    = 0,
-        char* centerXT                    = new char[100] {'\0'},
-        char* centerYT                    = new char[100] {'\0'},
-        char* centerZT                    = new char[100] {'\0'},
-        char* angleXT                     = new char[100] {'\0'},
-        char* angleYT                     = new char[100] {'\0'},
-        char* angleZT                     = new char[100] {'\0'},
-        char* radT                        = new char[100] {'\0'},
-        char* radElXT                     = new char[100] {'\0'},
-        char* radElYT                     = new char[100] {'\0'},
-        char* radElZT                     = new char[100] {'\0'},
-        char* heightT                     = new char[100] {'\0'},
-        char* circleStepT                 = new char[100] {'\0'},
         Color color                       = BLACK
     );
 

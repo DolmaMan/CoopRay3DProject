@@ -38,6 +38,9 @@ void Camera3DController::HandleInput() {
         if (IsCursorHidden()) EnableCursor();
         else DisableCursor();
     }
+
+    if (IsKeyPressed(KEY_ESCAPE) && IsCursorHidden())
+        EnableCursor();
 }
 
 void InitProgram() {
@@ -48,6 +51,8 @@ void InitProgram() {
 }
 
 void CleanupProgram() {
+    for (auto pair : ListFonts)
+        UnloadFont(pair.second);
     CloseAudioDevice();
     CloseWindow();
 }

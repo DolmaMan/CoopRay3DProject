@@ -26,7 +26,7 @@ void UI::DrawMainMenu() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE); //Ñåòêà
+    DrawTextureRec(screenTexture.texture, screenTextureRect, { 0.0,50.0 }, RAYWHITE);
 
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 255);
 
@@ -40,6 +40,7 @@ void UI::DrawMainMenu() {
     {
         addMenuRequested = true;
         ResetUiControls();
+        UpdateUiControls();
     }
     if (GuiButton({ 150, 10, 120, 30 }, "Delete Shape") &&
         !editMenuRequested && !addMenuRequested)
@@ -53,8 +54,11 @@ void UI::DrawMainMenu() {
     if (GuiButton({ 280, 10, 120, 30 }, "Edit Shape") &&
         !addMenuRequested && !deleteMenuRequested)
     { 
-        if (isElementHighlighted())
-            editMenuRequested = true; 
+        if (isElementHighlighted()) {
+            editMenuRequested = true;
+            ResetUiControls();
+            UpdateUiControls();
+        }
     }
 
     if (GuiButton({ (float)screenWidth - 140, 10, 120, 30 }, "Change Font")
@@ -90,18 +94,17 @@ void UI::DrawMainMenu() {
 
     DrawFigureList();
     DrawFPS(screenWidth - 80, screenHeight - 25);
+
     DrawExitMenu();
     EndDrawing();
 
-    if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
-        //PlaySound(ListSounds["General_Quitgame.wav"]);
+    if (!showExitMenu && (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE))) {
+        PlaySound(ListSounds["General_Quitgame.wav"]);
         showExitMenu = true;
-        //exitWindow = true;  //Вернуть в конце
     }
 }
 
 void UI::DrawExitMenu() {
-
     if (showExitMenu)
     {
         int MBresult = GuiMessageBox({ 470, 270, 320, 90 },
@@ -113,13 +116,9 @@ void UI::DrawExitMenu() {
         }
         else if (MBresult == 2 || MBresult == 0)
         {
-            showExitMenu = false; 
+            showExitMenu = false;
         }
-        
-        if (IsKeyPressed(KEY_ESCAPE)) showExitMenu = false;
-
     }
-
 }
 
 void UI::LoadUiControls() {
@@ -158,9 +157,106 @@ void UI::LoadUiControls() {
 
 void UI::ResetUiControls()
 {
-    for (auto& pair : mapUiControls)
+    for (auto& pair : mapUiControls) {
+        strncpy(pair.second.str, "0", 99);
+        pair.second.str[99] = '\0';
+        strncpy(pair.second.secStr, "0", 99);
+        pair.second.secStr[99] = '\0';
+    }
+    for (auto& fig : vecFigures) {
+        std::visit([&](auto&& arg) {
+            if ((*arg).Properties.isHighlightedInMenu) {
+                using T = std::decay_t<decltype(arg)>;
+                char buffer[100];
+                if constexpr (std::is_same_v<T, Circle*>) {
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.x);
+                    mapUiControls["centerX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.y);
+                    mapUiControls["centerY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.z);
+                    mapUiControls["centerZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.x);
+                    mapUiControls["angleX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.y);
+                    mapUiControls["angleY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.z);
+                    mapUiControls["angleZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.radius);
+                    mapUiControls["rad"].SetSecStr(buffer);
+                }
+                else if constexpr (std::is_same_v<T, Ellipse*>) {
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.x);
+                    mapUiControls["centerX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.y);
+                    mapUiControls["centerY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.z);
+                    mapUiControls["centerZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.x);
+                    mapUiControls["angleX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.y);
+                    mapUiControls["angleY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.z);
+                    mapUiControls["angleZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.radius.x);
+                    mapUiControls["radElX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.radius.y);
+                    mapUiControls["radElY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.radius.z);
+                    mapUiControls["radElZ"].SetSecStr(buffer);
+                }
+                else if constexpr (std::is_same_v<T, Helix*>) {
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.x);
+                    mapUiControls["centerX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.y);
+                    mapUiControls["centerY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.center.z);
+                    mapUiControls["centerZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.x);
+                    mapUiControls["angleX"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.y);
+                    mapUiControls["angleY"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.tiltAngles.z);
+                    mapUiControls["angleZ"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.radius);
+                    mapUiControls["rad"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.height);
+                    mapUiControls["height"].SetSecStr(buffer);
+
+                    snprintf(buffer, 99, "%g", (*arg).Properties.circleStep);
+                    mapUiControls["step"].SetSecStr(buffer);
+                }
+            }
+            }, fig);
+    }
+}
+
+void UI::UpdateUiControls()
+{
+    for(auto& pair : mapUiControls)
     {
-        pair.second.str = new char[100] {'0'};
+        strncpy(pair.second.str, pair.second.secStr, 99);
+        pair.second.str[99] = '\0';
     }
 }
 
@@ -168,37 +264,9 @@ void UI::DrawAddMenu
     (
         bool isEdit,
         int currentFigureInDropdownBox,
-        char* centerXT,
-        char* centerYT,
-        char* centerZT,
-        char* angleXT,
-        char* angleYT,
-        char* angleZT,
-        char* radT,
-        char* radElXT,
-        char* radElYT,
-        char* radElZT,
-        char* heightT,
-        char* circleStepT,
         Color oldColor 
     ) 
 {
-    if(isEdit)
-    {
-        mapUiControls["centerX"].str = centerXT;
-        mapUiControls["centerY"].str = centerYT;
-        mapUiControls["centerZ"].str = centerZT;
-        mapUiControls["angleX"].str = angleXT;
-        mapUiControls["angleY"].str = angleYT;
-        mapUiControls["angleZ"].str = angleZT;
-        mapUiControls["rad"].str = radT;
-        mapUiControls["radElX"].str = radElXT;
-        mapUiControls["radElY"].str = radElYT;
-        mapUiControls["radElZ"].str = radElZT;
-        mapUiControls["height"].str = heightT;
-        mapUiControls["step"].str = circleStepT;
-    }
-
     DrawRectanglePro(menusRect, { 0, 0 }, 0, WHITE);
     DrawRectangleLines(menusRect.x + 1, menusRect.y, menusRect.width - 1, menusRect.height - 1, BLACK);
 
@@ -443,7 +511,7 @@ void UI::DrawAddMenu
     if (isWrongFields) {
         DrawTextEx(
             ListFonts[currentFontName],
-            "All fields must be filled in\n   and only with numbers",
+            "All fields must be filled in\nand only with numbers",
             { btnRect.x - 60, btnRect.y - 40 }, 16, 0, BLACK);
     }
     
@@ -452,7 +520,7 @@ void UI::DrawAddMenu
 
 void UI::DrawEditMenu() 
 {
-    for (auto fig : vecFigures) {
+    for (auto& fig : vecFigures) {
         std::visit([](auto&& arg) {
             if ((*arg).Properties.isHighlightedInMenu) {
                 using T = std::decay_t<decltype(arg)>;
@@ -461,18 +529,6 @@ void UI::DrawEditMenu()
                     (
                         true,
                         0,
-                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
-                        (char*)std::to_string((*arg).Properties.radius).c_str(),
-                        nullptr,
-                        nullptr,
-                        nullptr,
-                        nullptr,
-                        nullptr,
                         (*arg).Properties.color
                     );
                 }
@@ -481,18 +537,6 @@ void UI::DrawEditMenu()
                     (
                         true,
                         1,
-                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
-                        nullptr,
-                        (char*)std::to_string((*arg).Properties.radius.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.radius.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.radius.z).c_str(),
-                        nullptr,
-                        nullptr,
                         (*arg).Properties.color
                     );
                 }
@@ -501,18 +545,6 @@ void UI::DrawEditMenu()
                     (
                         true,
                         2,
-                        (char*)std::to_string((*arg).Properties.center.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.center.z).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.x).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.y).c_str(),
-                        (char*)std::to_string((*arg).Properties.tiltAngles.z).c_str(),
-                        (char*)std::to_string((*arg).Properties.radius).c_str(),
-                        nullptr,
-                        nullptr,
-                        nullptr,
-                        (char*)std::to_string((*arg).Properties.height).c_str(),
-                        (char*)std::to_string((*arg).Properties.circleStep).c_str(),
                         (*arg).Properties.color
                     );
                 }
@@ -523,33 +555,18 @@ void UI::DrawEditMenu()
 
 void UI::DrawDeleteMenu() 
 {
-    if (showMessageBox) {
-        int delMBres = GuiMessageBox({ 470, 270, 320, 90 },
-            "#191#Delete", "Delete figure?", "Yes;No");
-        if (delMBres == 1)
-        {
-            for (auto it = vecFigures.begin(); it != vecFigures.end();) {
-                std::visit([&](auto&& arg) {
-                    if ((*arg).Properties.isHighlightedInMenu) {
-                        it = vecFigures.erase(it);
-                    }
-                    else {
-                        it++;
-                    }
-                    }, (*it));
+    for (auto it = vecFigures.begin(); it != vecFigures.end();) {
+        std::visit([&](auto&& arg) {
+            if ((*arg).Properties.isHighlightedInMenu) {
+                it = vecFigures.erase(it);
             }
-            showMessageBox = false;
-            deleteMenuRequested = false;
-            UpdateFigureList();
-        }
-        else if (delMBres == 2 || delMBres == 0)
-        {
-            showMessageBox = false;
-            deleteMenuRequested = false;
-            UpdateFigureList();
-        }
-        
+            else {
+                it++;
+            }
+            }, (*it));
     }
+    UpdateFigureList();
+    deleteMenuRequested = false;
 }
 
 void UI::UpdateFigureList()
@@ -678,18 +695,16 @@ bool UI::isElementHighlighted()
     return fl;
 }
 
-UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r, char* s)
+UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r, const char* s)
 {
     rect = r;
     editMode = false;
-    str = s;
-}
-
-UI::GuiTextBoxControl::GuiTextBoxControl(Rectangle r)
-{
-    rect = r;
-    editMode = false;
-    str = new char[100] {'0'};
+    strncpy(str, s, 99);
+    str[0] = '0';
+    str[99] = '\0';
+    strncpy(secStr, s, 99);
+    secStr[99] = '\0';
+    secStr[0] = '0';
 }
 
 void UI::GuiTextBoxControl::DrawControl()
@@ -697,4 +712,10 @@ void UI::GuiTextBoxControl::DrawControl()
     if (GuiTextBox(rect, str, 100, editMode)) {
         editMode = !editMode;
     }
+}
+
+void UI::GuiTextBoxControl::SetSecStr(const char* s) 
+{
+    strncpy(secStr, s, 99);
+    secStr[99] = '\0';
 }
