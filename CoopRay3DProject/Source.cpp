@@ -75,6 +75,8 @@ int main()
     bigRect = { 0.0f ,50.0f, (float)screenWidth, (float)screenHeight - 80 };
     listFiguresRect = { (float)screenWidth - 300, 135, 300, (float)screenHeight - 165 };
     
+    UI::LoadUiControls();
+
     InitAudioDevice();
     LoadSounds();
     LoadFonts();
