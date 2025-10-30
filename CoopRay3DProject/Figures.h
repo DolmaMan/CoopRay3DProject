@@ -24,6 +24,8 @@ public:
 	Figure(){}
 
 	virtual std::string getClassName() const = 0;
+	virtual Vector3 getPoint(float t) const = 0;
+	virtual Vector3 getFirstDerivative(float t) const = 0;
 };
 
 class Circle : public Figure 
@@ -37,10 +39,13 @@ public:
 
 	CircleParams Properties;
 
-	Circle(CircleParams p);
+	Circle(CircleParams p) : Properties(p) {}
 
 	static void DrawCircle(Circle* circle, int segments = 320);
 	std::string getClassName() const override { return "Circle"; }
+
+	Vector3 getPoint(float t) const;
+	Vector3 getFirstDerivative(float t) const;
 };
 
 class Ellipse : public Figure {
@@ -58,6 +63,9 @@ public:
 
 	static void DrawEllipse(Ellipse* ellipse, int segments = 320);
 	std::string getClassName() const override { return "Ellipse"; }
+
+	Vector3 getPoint(float t) const;
+	Vector3 getFirstDerivative(float t) const;
 };
 
 class Helix : public Figure {
@@ -77,6 +85,9 @@ public:
 
 	static void DrawHelix(Helix* helix);
 	std::string getClassName() const override { return "Helix"; }
+
+	Vector3 getPoint(float t) const;
+	Vector3 getFirstDerivative(float t) const;
 };
 
 
