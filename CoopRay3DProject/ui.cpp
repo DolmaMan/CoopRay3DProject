@@ -8,8 +8,8 @@ namespace UI {
     bool showExitMenu;
     char tStr[100];
     bool tEditMode = false;
-    char pointStr[50] = "point: ";
-    char derStr[50] = "derivative: ";
+    char pointStr[50] = "";
+    char derStr[50] = "";
 }
 
 void UI::DrawMainMenu() {
@@ -115,37 +115,33 @@ void UI::DrawPoint()
 {
     
     GuiLabel({ (float)screenWidth - 160, (float)screenHeight - 30, 120, 30}, "t = ");
-    //значение t в tStr
     if (GuiTextBox({ (float)screenWidth - 120, (float)screenHeight - 25, 50, 20}, tStr, 100, tEditMode))
     {
         tEditMode = !tEditMode;
     }
-    //тут считать
     if (GuiButton({ (float)screenWidth - 60, (float)screenHeight - 25, 50, 20 }, "Ok"))
     {
-        /*std::visit([&](auto&& arg) {
-            usint T =
-                std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, Circle*>)
-            {
+        bool fl = false;
+        for (auto& fig : vecFigures) {
+            if(!fl)
+                std::visit([&](auto&& arg) {
+                    Vector3 point = (*arg).getPoint(strtof(tStr, NULL));
+                    snprintf(pointStr, 50, "%.2f;%.2f;%.2f", point.x, point.y, point.z);
 
-            }
-            else if constexpr (std::is_same_v<T, Ellipse*>)
-            {
+                    Vector3 der = (*arg).getFirstDerivative(strtof(tStr, NULL));
+                    snprintf(derStr, 50, "%.2f;%.2f;%.2f", der.x, der.y, der.z);
 
-            }
-            else if constexpr (std::is_same_v<T, Helix*>)
-            {
-
-            }
-
-            }, fig);*/
-    
+                    fl = true;
+                }, fig);
+        }
     }
 
     //чары в нэймспейсе. туда че посчитает
-    DrawTextEx(ListFonts[currentFontName], pointStr, { 20, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
-    DrawTextEx(ListFonts[currentFontName], derStr, { 150, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
+    GuiLabel({ 20, (float)screenHeight - 20, 60, 20 }, "Point:");
+    DrawTextEx(ListFonts[currentFontName], pointStr, { 80, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
+    
+    GuiLabel({ 240, (float)screenHeight - 20, 100, 20 }, "Derivative:");
+    DrawTextEx(ListFonts[currentFontName], derStr, { 340, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
 
 }
 
