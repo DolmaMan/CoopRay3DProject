@@ -13,8 +13,4 @@ public:
     };
 
     static void DrawScene(const Camera3DController& cameraController);
-    static void DrawEllipsoid(Vector3 position, float radiusX, float radiusY, float radiusZ,
-        int segments, Color color);
-    static std::vector<unsigned short> GenerateEllipsoidIndices(int segments);
-    static std::vector<EllipsoidVertex> GenerateEllipsoidVertices(float radiusX, float radiusY, float radiusZ, int segments, Color color);
 };
