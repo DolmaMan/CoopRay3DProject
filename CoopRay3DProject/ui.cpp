@@ -6,6 +6,10 @@ namespace UI {
         deleteMenuRequested = false;
     bool showMessageBox;
     bool showExitMenu;
+    char tStr[100];
+    bool tEditMode = false;
+    char pointStr[50] = "point: ";
+    char derStr[50] = "derivative: ";
 }
 
 void UI::DrawMainMenu() {
@@ -93,7 +97,9 @@ void UI::DrawMainMenu() {
     
 
     DrawFigureList();
-    DrawFPS(screenWidth - 80, screenHeight - 25);
+    
+    
+    DrawPoint();
 
     DrawExitMenu();
     EndDrawing();
@@ -102,6 +108,45 @@ void UI::DrawMainMenu() {
         PlaySound(ListSounds["General_Quitgame.wav"]);
         showExitMenu = true;
     }
+}
+
+
+void UI::DrawPoint()
+{
+    
+    GuiLabel({ (float)screenWidth - 160, (float)screenHeight - 30, 120, 30}, "t = ");
+    //значение t в tStr
+    if (GuiTextBox({ (float)screenWidth - 120, (float)screenHeight - 25, 50, 20}, tStr, 100, tEditMode))
+    {
+        tEditMode = !tEditMode;
+    }
+    //тут считать
+    if (GuiButton({ (float)screenWidth - 60, (float)screenHeight - 25, 50, 20 }, "Ok"))
+    {
+        /*std::visit([&](auto&& arg) {
+            usint T =
+                std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, Circle*>)
+            {
+
+            }
+            else if constexpr (std::is_same_v<T, Ellipse*>)
+            {
+
+            }
+            else if constexpr (std::is_same_v<T, Helix*>)
+            {
+
+            }
+
+            }, fig);*/
+    
+    }
+
+    //чары в нэймспейсе. туда че посчитает
+    DrawTextEx(ListFonts[currentFontName], pointStr, { 20, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
+    DrawTextEx(ListFonts[currentFontName], derStr, { 150, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
+
 }
 
 void UI::DrawExitMenu() {
@@ -697,6 +742,8 @@ void UI::DrawFigureList()
         }
     }
 }
+
+
 
 bool UI::isElementHighlighted()
 {

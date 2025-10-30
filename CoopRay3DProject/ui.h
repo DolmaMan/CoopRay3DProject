@@ -10,8 +10,11 @@ namespace UI {
     struct GuiTextBoxControl {
         char str[100];
         char secStr[100];
+        
         Rectangle rect;
         bool editMode;
+        
+
 
         GuiTextBoxControl(Rectangle r, const char* s = "0");
         GuiTextBoxControl() : GuiTextBoxControl({0,0,0,0}){}
@@ -42,6 +45,8 @@ namespace UI {
     void UpdateFigureList();
     void UpdateFigureList(Rectangle excludingRect);
     void DrawFigureList();
+
+    void DrawPoint();
 
     bool isElementHighlighted();
 }
