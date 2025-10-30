@@ -19,7 +19,7 @@ Rectangle listFiguresRect;
 
 std::unordered_map<std::string, Sound> ListSounds;
 
-bool exitWindowRequested = false;   // Flag to request window to exit
+bool exitWindowRequested = false;
 bool exitWindow = false;
 
 Camera3DController cameraController;

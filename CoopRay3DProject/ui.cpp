@@ -277,7 +277,7 @@ void UI::DrawAddMenu
     static const char* figStr = "Circle;Ellipse;Helix";
     static int selectedIndex = currentFigureInDropdownBox;
     static bool editMode = false;
-    if (GuiDropdownBox({ menusRect.x + 145, menusRect.y + 230, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
+    if (GuiDropdownBox({ menusRect.x + 145, menusRect.y + 210, 130, 20 }, figStr, &selectedIndex, editMode)) { editMode = !editMode; }
     if (selectedIndex == 0)
     {
         mapUiControls["centerX"].DrawControl();
@@ -511,7 +511,7 @@ void UI::DrawAddMenu
     if (isWrongFields) {
         DrawTextEx(
             ListFonts[currentFontName],
-            "All fields must be filled in\nand only with numbers",
+            "All fields must be filled in\n   and only with numbers",
             { btnRect.x - 60, btnRect.y - 40 }, 16, 0, BLACK);
     }
     
@@ -553,20 +553,35 @@ void UI::DrawEditMenu()
     }
 }
 
-void UI::DrawDeleteMenu() 
+void UI::DrawDeleteMenu()
 {
-    for (auto it = vecFigures.begin(); it != vecFigures.end();) {
-        std::visit([&](auto&& arg) {
-            if ((*arg).Properties.isHighlightedInMenu) {
-                it = vecFigures.erase(it);
+    if (showMessageBox) {
+        int delMBres = GuiMessageBox({ 470, 270, 320, 90 },
+            "#191#Delete", "Delete figure?", "Yes;No");
+        if (delMBres == 1)
+        {
+            for (auto it = vecFigures.begin(); it != vecFigures.end();) {
+                std::visit([&](auto&& arg) {
+                    if ((*arg).Properties.isHighlightedInMenu) {
+                        it = vecFigures.erase(it);
+                    }
+                    else {
+                        it++;
+                    }
+                    }, (*it));
             }
-            else {
-                it++;
-            }
-            }, (*it));
+            showMessageBox = false;
+            deleteMenuRequested = false;
+            UpdateFigureList();
+        }
+  
+        else if (delMBres == 2 || delMBres == 0)
+        {
+            showMessageBox = false;
+            deleteMenuRequested = false;
+            UpdateFigureList();
+        }
     }
-    UpdateFigureList();
-    deleteMenuRequested = false;
 }
 
 void UI::UpdateFigureList()
