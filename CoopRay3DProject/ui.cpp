@@ -6,6 +6,7 @@ namespace UI {
         deleteMenuRequested = false;
     bool showMessageBox;
     bool showExitMenu;
+    bool showFirstDerivative = false;
     char tStr[100];
     bool tEditMode = false;
     char pointStr[50] = "";
@@ -24,7 +25,10 @@ void UI::DrawMainMenu() {
     }
     BeginTextureMode(screenTexture);
     ClearBackground(RAYWHITE);
-    Drawer::DrawScene(cameraController);
+    if (showFirstDerivative)
+        Drawer::DrawScene(cameraController, pointStr, derStr);
+    else
+        Drawer::DrawScene(cameraController);
     EndTextureMode();
 
     BeginDrawing();
@@ -98,9 +102,8 @@ void UI::DrawMainMenu() {
 
     DrawFigureList();
     
-    
     DrawPoint();
-
+    
     DrawExitMenu();
     EndDrawing();
 
@@ -113,7 +116,6 @@ void UI::DrawMainMenu() {
 
 void UI::DrawPoint()
 {
-    
     GuiLabel({ (float)screenWidth - 160, (float)screenHeight - 30, 120, 30}, "t = ");
     if (GuiTextBox({ (float)screenWidth - 120, (float)screenHeight - 25, 50, 20}, tStr, 100, tEditMode))
     {
@@ -125,18 +127,20 @@ void UI::DrawPoint()
         for (auto& fig : vecFigures) {
             if(!fl)
                 std::visit([&](auto&& arg) {
+                if ((*arg).Properties.isHighlightedInMenu) {
                     Vector3 point = (*arg).getPoint(strtof(tStr, NULL));
                     snprintf(pointStr, 50, "%.2f;%.2f;%.2f", point.x, point.y, point.z);
 
                     Vector3 der = (*arg).getFirstDerivative(strtof(tStr, NULL));
                     snprintf(derStr, 50, "%.2f;%.2f;%.2f", der.x, der.y, der.z);
 
+                    showFirstDerivative = true;
                     fl = true;
+                }
                 }, fig);
         }
     }
 
-    //чары в нэймспейсе. туда че посчитает
     GuiLabel({ 20, (float)screenHeight - 20, 60, 20 }, "Point:");
     DrawTextEx(ListFonts[currentFontName], pointStr, { 80, (float)screenHeight - 20 }, 16, 1, DARKGRAY);
     
@@ -290,6 +294,7 @@ void UI::ResetUiControls()
             }
             }, fig);
     }
+    showFirstDerivative = false;
 }
 
 void UI::UpdateUiControls()
@@ -372,7 +377,7 @@ void UI::DrawAddMenu
                 else
                 {
                     editMenuRequested = false;
-                    DrawDeleteMenu();
+                    DrawDeleteMenu(false);
                 }
 
                 Circle* circle = new Circle(params);
@@ -454,7 +459,7 @@ void UI::DrawAddMenu
                 else
                 {
                     editMenuRequested = false;
-                    DrawDeleteMenu();
+                    DrawDeleteMenu(false);
                 }
 
                 Ellipse* ellipse = new Ellipse(params);
@@ -528,7 +533,7 @@ void UI::DrawAddMenu
                 else
                 {
                     editMenuRequested = false;
-                    DrawDeleteMenu();
+                    DrawDeleteMenu(false);
                 }
 
                 Helix* helix = new Helix(params);
@@ -589,39 +594,42 @@ void UI::DrawEditMenu()
                         (*arg).Properties.color
                     );
                 }
+                
             }
             }, fig);
     }
 }
 
-void UI::DrawDeleteMenu()
+void UI::DrawDeleteMenu(bool withMenu)
 {
-    if (showMessageBox) {
+    int delMBres = 1;
+    if (showMessageBox && withMenu) 
+    {
         int delMBres = GuiMessageBox({ 470, 270, 320, 90 },
             "#191#Delete", "Delete figure?", "Yes;No");
-        if (delMBres == 1)
-        {
-            for (auto it = vecFigures.begin(); it != vecFigures.end();) {
-                std::visit([&](auto&& arg) {
-                    if ((*arg).Properties.isHighlightedInMenu) {
-                        it = vecFigures.erase(it);
-                    }
-                    else {
-                        it++;
-                    }
-                    }, (*it));
-            }
-            showMessageBox = false;
-            deleteMenuRequested = false;
-            UpdateFigureList();
+    }
+    if (delMBres == 1)
+    {
+        for (auto it = vecFigures.begin(); it != vecFigures.end();) {
+            std::visit([&](auto&& arg) {
+                if ((*arg).Properties.isHighlightedInMenu) {
+                    it = vecFigures.erase(it);
+                }
+                else {
+                    it++;
+                }
+                }, (*it));
         }
+        showMessageBox = false;
+        deleteMenuRequested = false;
+        UpdateFigureList();
+    }
   
-        else if (delMBres == 2 || delMBres == 0)
-        {
-            showMessageBox = false;
-            deleteMenuRequested = false;
-            UpdateFigureList();
-        }
+    else if (delMBres == 2 || delMBres == 0)
+    {
+        showMessageBox = false;
+        deleteMenuRequested = false;
+        UpdateFigureList();
     }
 }
 
@@ -738,8 +746,6 @@ void UI::DrawFigureList()
         }
     }
 }
-
-
 
 bool UI::isElementHighlighted()
 {

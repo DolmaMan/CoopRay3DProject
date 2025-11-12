@@ -100,14 +100,8 @@ Vector3 Ellipse::getPoint(float t) const
 
 Vector3 Helix::getPoint(float t) const
 {
-    float totalCircles = Properties.height / Properties.circleStep;
-    float maxT = totalCircles * 2.0f * PI;
-
-    float normalizedT = fmodf(t, maxT);
-    if (normalizedT < 0) normalizedT += maxT;
-
-    float currentAngle = normalizedT;
-    float currentHeight = (normalizedT / maxT - 0.5f) * Properties.height;
+    float currentAngle = t;
+    float currentHeight = (t / (2.0f * PI * (Properties.height / Properties.circleStep)) - 0.5f) * Properties.height;
 
     float rx = Properties.tiltAngles.x * DEG2RAD;
     float ry = Properties.tiltAngles.y * DEG2RAD;
@@ -145,8 +139,6 @@ Vector3 Helix::getPoint(float t) const
 
 Vector3 Circle::getFirstDerivative(float t) const
 {
-    // Производная окружности: 
-    // dx/dt = -r*sin(t), dy/dt = 0, dz/dt = r*cos(t)
     float dx = -Properties.radius * sinf(t);
     float dy = 0.0f;
     float dz = Properties.radius * cosf(t);
@@ -173,6 +165,7 @@ Vector3 Circle::getFirstDerivative(float t) const
     float x3 = x2;
     float y3 = y2 * cosX - z2 * sinX;
     float z3 = y2 * sinX + z2 * cosX;
+
 
     return { x3, y3, z3 };
 }
@@ -216,15 +209,12 @@ Vector3 Helix::getFirstDerivative(float t) const
     float totalCircles = Properties.height / Properties.circleStep;
     float maxT = totalCircles * 2.0f * PI;
 
-    float normalizedT = fmodf(t, maxT);
-    if (normalizedT < 0) normalizedT += maxT;
-
     // Производная спирали: 
-    // dx/dt = -r*sin(t), dy/dt = r*cos(t), dz/dt = h/(2π*N) N - количество витков
+    // dx/dt = -r*sin(t), dy/dt = r*cos(t), dz/dt = h/(2π*N) где N - количество витков
     float heightPerRadian = Properties.height / maxT;
 
-    float dx = -Properties.radius * sinf(normalizedT);
-    float dy = Properties.radius * cosf(normalizedT);
+    float dx = -Properties.radius * sinf(t);
+    float dy = Properties.radius * cosf(t);
     float dz = heightPerRadian;
 
     float rx = Properties.tiltAngles.x * DEG2RAD;
@@ -353,20 +343,21 @@ void Helix::DrawHelix(Helix* helix)
     if (segments < 36) segments = 36;
 
     Vector3 prevPoint;
-    bool firstPoint = true;
+    bool isFirstPoint = true;
 
     for (int i = 0; i <= segments; i++) {
         float t = (float)i / (float)segments * totalAngle;
         Vector3 point = helix->getPoint(t);
 
-        if (!firstPoint) {
+        if (!isFirstPoint) {
             if (!helix->Properties.isHighlightedInMenu)
                 DrawLine3D(prevPoint, point, helix->Properties.color);
             else
                 DrawLine3D(prevPoint, point, RED);
         }
-
+        else {
+            isFirstPoint = false;
+        }
         prevPoint = point;
-        firstPoint = false;
     }
 }

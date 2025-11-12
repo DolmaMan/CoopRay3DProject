@@ -40,7 +40,7 @@ namespace UI {
     );
 
     void DrawEditMenu();
-    void DrawDeleteMenu();
+    void DrawDeleteMenu(bool withMenu = true);
     
     void UpdateFigureList();
     void UpdateFigureList(Rectangle excludingRect);

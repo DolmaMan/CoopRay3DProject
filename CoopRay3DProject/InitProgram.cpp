@@ -2,9 +2,9 @@
 
 
 Camera3DController::Camera3DController() {
-    cameraPosition = { 10.0f, 10.0f, 10.0f };
+    cameraPosition = { 10.0f, -10.0f, 10.0f };
     cameraTarget = { 0.0f, 0.0f, 0.0f };
-    cameraUp = { 0.0f, 1.0f, 0.0f };
+    cameraUp = { 0.0f, 0.0f, 90.0f };
     cameraSpeed = 0.1f;
     cameraRotationSpeed = 0.03f;
     camera.position = cameraPosition;
